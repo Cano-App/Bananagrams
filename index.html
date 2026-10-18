@@ -9,7 +9,7 @@
   --ink:#1B1915; --ink-2:#4A453C; --muted:#7F796C;
   --line:#DCD7CA; --line-strong:#C6C0AF;
   --tile:#FCFBF6; --tile-edge:#D6CFBD; --tile-ink:#221F19;
-  --p1:#C98418; --p2:#1F7A73;
+  --p1:#C98418; --p2:#1F7A73; --p3:#8A4FBF; --p4:#C2452D; --p5:#2E6FB8; --p6:#5E8A2C; --p7:#B23A7A; --p8:#7A6A45;
   --good:#3C8552; --bad:#B8432C; --bad-soft:#F4DDD7;
   --warn:#A86B00; --warn-soft:#FBEBC8;
   --shadow:0 1px 0 rgba(30,26,18,.05), 0 2px 8px rgba(30,26,18,.06);
@@ -20,7 +20,7 @@
     --ink:#F0ECE1; --ink-2:#C6BFAF; --muted:#9A9383;
     --line:#35311F; --line-strong:#4A4430;
     --tile:#2F2B20; --tile-edge:#4A4331; --tile-ink:#F3EFE3;
-    --p1:#E8B145; --p2:#49AFA5;
+    --p1:#E8B145; --p2:#49AFA5; --p3:#B88AE6; --p4:#EF8466; --p5:#6FA8EC; --p6:#9CC765; --p7:#E47FB5; --p8:#C7B48A;
     --good:#5CAE72; --bad:#E0745A; --bad-soft:#3B201A;
     --warn:#E8B145; --warn-soft:#3A2E12;
     --shadow:0 1px 0 rgba(0,0,0,.3), 0 2px 10px rgba(0,0,0,.35);
@@ -31,7 +31,7 @@
   --ink:#F0ECE1; --ink-2:#C6BFAF; --muted:#9A9383;
   --line:#35311F; --line-strong:#4A4430;
   --tile:#2F2B20; --tile-edge:#4A4331; --tile-ink:#F3EFE3;
-  --p1:#E8B145; --p2:#49AFA5;
+  --p1:#E8B145; --p2:#49AFA5; --p3:#B88AE6; --p4:#EF8466; --p5:#6FA8EC; --p6:#9CC765; --p7:#E47FB5; --p8:#C7B48A;
   --good:#5CAE72; --bad:#E0745A; --bad-soft:#3B201A;
   --warn:#E8B145; --warn-soft:#3A2E12;
   --shadow:0 1px 0 rgba(0,0,0,.3), 0 2px 10px rgba(0,0,0,.35);
@@ -57,7 +57,7 @@ header.bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb, var(--
 .ghost:disabled{opacity:.45;cursor:not-allowed}
 
 /* scoreboard */
-.board{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 4px}
+.board{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:16px 0 4px}
 .side{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:13px 14px;box-shadow:var(--shadow);position:relative;overflow:hidden;min-width:0}
 .side[data-p="0"]{--accent:var(--p1)} .side[data-p="1"]{--accent:var(--p2)}
 .side .name{font-weight:700;font-size:13px;color:var(--accent);letter-spacing:.05em;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -165,6 +165,34 @@ textarea.typed{width:100%;min-height:90px;margin-top:9px;border:1px solid var(--
 .w-mini i{font-style:normal;color:var(--muted);font-weight:400}
 .bonus-tag{font-size:11.5px;font-weight:700;color:var(--good)}
 .lb{margin-top:26px}
+.side.me{box-shadow:inset 0 0 0 2px var(--accent),var(--shadow)}
+.gamebar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:9px 12px;font-size:13px;color:var(--muted)}
+.gamebar b{font-family:"Bricolage Grotesque",sans-serif;font-size:20px;letter-spacing:.12em;color:var(--ink)}
+.lobby{padding:14px}
+.lobby-cols{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:640px){.lobby-cols{grid-template-columns:1fr 1fr}}
+.lobby-box{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--paper)}
+.lobby-box h3{font-size:16px;font-weight:800;margin:0 0 2px}
+.lobby-box .hint{margin:0 0 10px}
+.lobby-box .primary{width:100%;max-width:none}
+#join-code{text-transform:uppercase;letter-spacing:.15em;font-weight:700}
+.lobby-msg{margin:12px 0 0;font-size:13.5px;font-weight:600;color:var(--bad);min-height:1em}
+.oth{border:1px solid var(--line);border-radius:11px;padding:9px 11px;margin-top:8px;background:var(--surface)}
+.oth.me{border-color:var(--accent)}
+.oth-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.oth .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);flex:none}
+.oth-name{font-weight:700}
+.oth-st{font-size:12.5px;color:var(--muted)}
+.oth-st.no{color:var(--bad);font-weight:600}
+.oth-ready{margin-left:auto;font-size:12px;font-weight:700;color:var(--muted)}
+.oth-ready.ok{color:var(--good)}
+.oth-acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.oth .wordlist{margin-top:8px}
+.oth .gridscroll{margin-top:8px}
+.order-seg[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.ready-btn{display:block;width:100%;margin-top:12px;padding:12px;border-radius:10px;border:2px dashed var(--line-strong);background:none;font-weight:700;font-size:14.5px;color:var(--ink-2)}
+.ready-btn.on{border-style:solid;border-color:var(--good);color:var(--good)}
+.ready-btn[hidden]{display:none}
 .lb-note{font-size:12.5px;color:var(--muted);margin:0 0 9px}
 .lb-warn{font-size:12.5px;color:var(--warn);background:var(--warn-soft);border-radius:9px;padding:8px 11px;margin:0 0 9px}
 .lb-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:13.5px}
@@ -262,7 +290,7 @@ table.scale td:last-child{text-align:right;font-weight:700}
 .clean.ok{background:color-mix(in srgb,var(--good) 14%,transparent);color:var(--good)}
 .clean.no{background:var(--bad-soft);color:var(--bad)}
 .tally{border-width:2px;border-color:var(--ink)}
-.tally-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.tally-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0}
 .tcol{padding:12px 14px}
 .tcol+.tcol{border-left:1px solid var(--line)}
 .tcol[data-p="0"]{--accent:var(--p1)} .tcol[data-p="1"]{--accent:var(--p2)}
@@ -295,6 +323,30 @@ table.scale td:last-child{text-align:right;font-weight:700}
 </header>
 
 <div class="wrap">
+  <section class="card" id="lobby" hidden>
+    <div class="card-hd"><h2>Play Bananagrams</h2><span class="eyebrow" style="margin-left:auto">2 to 8 players</span></div>
+    <div class="lobby">
+      <div class="field"><label for="my-name">Your name</label><input id="my-name" maxlength="20" autocomplete="nickname"></div>
+      <div class="lobby-cols">
+        <div class="lobby-box">
+          <h3>Start a game</h3>
+          <p class="hint">You’ll get a code to send the other players.</p>
+          <div class="field"><label for="new-target">Play to</label><input id="new-target" type="number" min="50" max="2000" value="250" inputmode="numeric"></div>
+          <button class="primary" id="btn-start">Start a game</button>
+        </div>
+        <div class="lobby-box">
+          <h3>Join a game</h3>
+          <p class="hint">Type the code from the player who started it.</p>
+          <div class="field"><label for="join-code">Game code</label><input id="join-code" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. K7QX2"></div>
+          <button class="primary" id="btn-join">Join game</button>
+        </div>
+      </div>
+      <p class="lobby-msg" id="lobby-msg"></p>
+    </div>
+  </section>
+
+  <div id="game" hidden>
+  <div class="gamebar"><span>Game code</span><b id="game-code"></b><span class="bar-sp"></span><button class="ghost" id="btn-invite">Invite players</button></div>
   <section class="board" id="board"></section>
   <p class="goal" id="goal"></p>
   <div id="banner"></div>
@@ -306,31 +358,31 @@ table.scale td:last-child{text-align:right;font-weight:700}
       <span class="eyebrow" id="dict-status" style="margin-left:auto">Loading dictionary…</span>
     </div>
     <div class="step" style="border-bottom:none;padding-bottom:0">
-      <div class="step-t"><b>1</b>Photo of each completed board</div>
+      <div class="step-t"><b>1</b><span id="my-step">Photo of your completed board</span></div>
     </div>
-    <div class="grid2" id="panes"></div>
+    <div id="panes"></div>
     <div class="step" style="border-top:1px solid var(--line);border-bottom:none">
-      <div class="step-t"><b>2</b>Who finished first?</div>
-      <div class="segs">
-        <button class="seg" id="out0" aria-pressed="false"></button>
-        <button class="seg" id="out1" aria-pressed="false"></button>
-      </div>
+      <div class="step-t"><b>2</b>Everyone’s boards</div>
+      <div id="others"></div>
     </div>
-    <div class="chat">
-      <div class="step-t"><b>3</b>Something off? Just tell it</div>
+    <div class="step" style="border-top:1px solid var(--line);border-bottom:none">
+      <div class="step-t"><b>3</b>Finishing order — tap players in the order they finished</div>
+      <div class="segs" id="order"></div>
+    </div>
+    <div class="chat" id="chat-box" hidden>
+      <div class="step-t"><b>4</b>Something off? Just tell it</div>
       <div class="chat-log" id="chat-log" hidden></div>
       <div class="chat-row">
         <textarea id="chat-in" rows="2" placeholder="e.g. There was a stray Y on the table — SLURRIES should be valid"></textarea>
         <button class="primary" id="chat-send">Send</button>
       </div>
-      <div class="hint" id="chat-off" hidden>Talking to the scorer works when the app is opened in the Claude app.</div>
     </div>
     <div class="preview" id="preview"></div>
     <div class="actions">
       <button class="primary" id="score-btn">Finalize round</button>
-      <button class="ghost" id="clear-btn">Clear round</button>
+      <button class="ghost" id="clear-btn">Clear my board</button>
       <div class="why-off" id="why-off"></div>
-      <div class="ver" style="font-size:11px;opacity:.45;margin-top:6px">v15</div>
+      <div class="ver" style="font-size:11px;opacity:.45;margin-top:6px">v16</div>
     </div>
   </section>
 
@@ -338,6 +390,7 @@ table.scale td:last-child{text-align:right;font-weight:700}
     <div class="hist-hd"><h2>Rounds this game</h2><button class="ghost" id="undo-btn">Edit / undo last round</button></div>
     <div id="history"></div>
   </section>
+  </div>
 
   <section class="lb" id="lb">
     <div class="hist-hd"><h2>Leaderboard · everyone</h2></div>
@@ -408,10 +461,12 @@ table.scale td:last-child{text-align:right;font-weight:700}
 <dialog id="dlg-setup">
   <div class="dlg-hd"><h3>Setup</h3></div>
   <div class="dlg-bd">
-    <div class="field"><label for="n0">Player 1 (this phone)</label><input id="n0" maxlength="20"></div>
-    <div class="field"><label for="n1">Player 2</label><input id="n1" maxlength="20"></div>
+    <div class="field"><label for="n0">Your name</label><input id="n0" maxlength="20"></div>
     <div class="field"><label for="tg">Play to</label><input id="tg" type="number" min="50" max="2000" inputmode="numeric"></div>
-    <button class="danger" id="btn-newgame">Start a new game (scores back to 0)</button>
+    <div class="segs">
+      <button class="ghost" id="btn-rematch">Start a rematch (same players, scores back to 0)</button>
+      <button class="danger" id="btn-leave">Leave this game</button>
+    </div>
   </div>
   <div class="dlg-ft"><button class="primary" id="setup-done">Done</button></div>
 </dialog>
@@ -432,9 +487,9 @@ table.scale td:last-child{text-align:right;font-weight:700}
       <li>No letter values — only word length counts. Past 9 letters, every extra letter adds 3 (FLAMETHROWERS, 13 letters = 28).</li>
       <li>The app scores what is <b>physically on the board</b>: every unbroken across or down run of 2+ tiles is one word. It never splits a run (TABLERUNNER is checked as TABLERUNNER).</li>
       <li>Any invalid or misspelled word scores 0 and makes the board <b>NOT CLEAN</b>.</li>
-      <li><b>+10 finishing bonus</b> goes to the first finisher <b>only with a CLEAN board</b>. If not clean, the other player gets it <b>only if their board is clean</b>. Neither clean: no bonus. Decided only after both boards are checked.</li>
+      <li><b>+10 finishing bonus</b> goes to the first finisher <b>only with a CLEAN board</b>. If not clean, it passes to the <b>next finisher with a clean board</b>, in finishing order. Nobody clean: no bonus. Decided only after every board is checked.</li>
       <li>Nothing counts until you tap <b>Finalize round</b>. Edit / undo last round puts it back for review.</li>
-      <li>First to <b id="rule-target">250</b> wins. Both past it in the same round: higher total wins.</li>
+      <li>First to <b id="rule-target">250</b> wins. More than one past it in the same round: the highest total wins.</li>
     </ul>
     <p class="hint">Dictionary: <span id="dict-count">—</span> words — the ENABLE word-game list combined with Hunspell en_US, plus newer two/three-letter tile words (OK, EW, ZA, QI). Not the official tournament list, so you can overrule any word by tapping it.</p>
   </div>
@@ -183639,11 +183694,15 @@ root.BGReader={readBoard:readBoard,classify:classify,N:N,findGlyphs:findGlyphs};
 <script>
 (function(){
 "use strict";
-var SCALE=[0,0,1,2,3,5,7,10,13], BONUS=10;
+var SCALE=[0,0,1,2,3,5,7,10,13], BONUS=10, MAXP=8;
 function pointsFor(n){ return n<2?0:(n>=9?16+3*(n-9):SCALE[n]); }
 var $=function(id){return document.getElementById(id);};
 function el(tag,cls,txt){ var e=document.createElement(tag); if(cls)e.className=cls; if(txt!=null)e.textContent=txt; return e; }
 function clean(w){ return String(w||'').toUpperCase().replace(/[^A-Z]/g,''); }
+function cleanCode(c){ return String(c||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6); }
+function accent(e,i){ e.style.setProperty('--accent','var(--p'+((i%MAXP)+1)+')'); return e; }
+function range(n){ var a=[]; for(var i=0;i<n;i++) a.push(i); return a; }
+function copy(o){ return JSON.parse(JSON.stringify(o)); }
 
 /* ---------- dictionary ---------- */
 var DICT=null;
@@ -183656,44 +183715,84 @@ function buildDict(){
 function inDict(w){ return DICT?DICT.has(w.toLowerCase()):true; }
 
 /* ---------- state ----------
+   One shared game per code, kept online so every player's phone sees it. Each
+   phone holds one seat (me) and edits only its own board; shared changes
+   (finishing order, finalize, undo, settings) go through a transaction so two
+   phones never overwrite each other.
    A side keeps the board exactly as reconstructed from the photo (rows of
-   letters, '.' = empty) plus the players' corrections. Words are ALWAYS derived
+   letters, '.' = empty) plus the player's corrections. Words are ALWAYS derived
    from the grid: every full horizontal and vertical run of 2+ tiles, never split. */
-var KEY='bgduel.v6';
-function blankSide(){ return {rows:[],unsure:{},drop:{},extra:[],ovr:{},loose:[],pos:{},geo:null}; }
-function blankDraft(){ return {out:undefined,p:[blankSide(),blankSide()]}; }
+var KEY='bgparty.v1';
+function blankSide(){ return {rows:[],unsure:{},drop:{},extra:[],ovr:{},loose:[],pos:{},geo:null,ready:false,rev:0}; }
+function blankDraft(n){ return {order:[],sit:{},p:range(n).map(blankSide)}; }
 function newId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
-var state={id:newId(),names:['Player 1','Player 2'],target:250,rounds:[],draft:blankDraft(),last:null,saved:0};
-var shots=[null,null], busy=[false,false], fixing=[false,false];
-var sampler=null, imagesOK=false, gameDoc=null, assets=null, dbBusy=false, dbAgain=false;
-var DB=null, unsubGame=null, lbGames=null, lbReadOnly=false, lbError='';
+function newCode(){ var A='ABCDEFGHJKMNPQRSTUVWXYZ23456789', s=''; for(var i=0;i<5;i++) s+=A[Math.floor(Math.random()*A.length)]; return s; }
+var pid=null, state=null, me=-1;
+var shots={}, busy={}, fixing={}, stMsg={};
+var sampler=null, imagesOK=false, DB=null, unsubGame=null, lbGames=null, lbError='';
 
-function save(){
-  state.saved=Date.now();
-  try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){}
-  pushDb();
+function loadLocal(){
+  var o=null; try{ o=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
+  pid=(o&&o.pid)||newId();
+  if(o&&o.game&&valid(o.game)){ state=o.game; me=state.pids.indexOf(pid); }
+  persist();
 }
-function pushDb(){
-  if(!gameDoc) return;
-  if(dbBusy){ dbAgain=true; return; }
-  dbBusy=true;
-  var t=totals(), w=winnerOf(t);
-  gameDoc.set({state:JSON.stringify(state),names:state.names.slice(),totals:t,rounds:state.rounds.length,
-    target:state.target,winner:w==null?-1:w,saved:state.saved,
-    best:[0,1].map(function(i){ return state.rounds.reduce(function(m,r){ return Math.max(m,r.scores[i]); },0); })})
-  .then(function(){ if(lbReadOnly){ lbReadOnly=false; renderLeaderboard(); } },function(e){
-    if(e&&e.code==='invalid_argument'){ lbReadOnly=true; renderLeaderboard(); }
-  }).then(function(){
-    dbBusy=false; if(dbAgain){ dbAgain=false; pushDb(); }
-  });
+function persist(){ try{ localStorage.setItem(KEY,JSON.stringify({pid:pid,game:state})); }catch(e){} }
+function valid(s){ return s&&typeof s.id==='string'&&Array.isArray(s.names)&&Array.isArray(s.pids)&&Array.isArray(s.rounds)&&s.draft&&Array.isArray(s.draft.p); }
+function fixShape(s){
+  var n=s.names.length; s.target=s.target||250;
+  while(s.draft.p.length<n) s.draft.p.push(blankSide());
+  s.draft.order=(s.draft.order||[]).filter(function(i){ return i>=0&&i<n; }); s.draft.sit=s.draft.sit||{};
+  s.draft.p.forEach(function(x){ x.unsure=x.unsure||{}; x.drop=x.drop||{}; x.extra=x.extra||[]; x.ovr=x.ovr||{}; x.loose=x.loose||[]; x.pos=x.pos||{}; });
+  return s;
 }
-function adopt(o){
-  if(!o||!Array.isArray(o.rounds)||!Array.isArray(o.names)) return false;
-  state.id=o.id||state.id||newId(); state.names=o.names; state.target=o.target||250; state.rounds=o.rounds; state.last=o.last||null;
-  state.draft=(o.draft&&o.draft.p&&o.draft.p[0]&&o.draft.p[0].extra)?o.draft:blankDraft(); state.saved=o.saved||0;
-  return true;
+function N(s){ return (s||state).names.length; }
+
+/* what goes online: tile positions and read hints stay on the phone that took the photo */
+function slimSide(x){ return {rows:x.rows.slice(),drop:Object.assign({},x.drop),extra:x.extra.slice(),ovr:Object.assign({},x.ovr),ready:!!x.ready,rev:x.rev||0}; }
+function docFor(s){
+  var g=copy(s); g.draft.p=s.draft.p.map(slimSide);
+  var txt=JSON.stringify(g);
+  for(var k=0;txt.length>200000&&k<g.rounds.length;k++){ delete g.rounds[k].boards; txt=JSON.stringify(g); }
+  var t=totals(s), w=winnerOf(s,t);
+  return {state:txt,names:s.names.slice(),totals:t,rounds:s.rounds.length,target:s.target,winner:w==null?-1:w,saved:s.saved,
+    best:range(N(s)).map(function(i){ return s.rounds.reduce(function(m,r){ return Math.max(m,r.scores[i]||0); },0); })};
 }
-function loadLocal(){ try{ adopt(JSON.parse(localStorage.getItem(KEY)||'null')); }catch(e){} }
+function parseDoc(d){ var s=null; try{ s=d&&d.state?JSON.parse(d.state):null; }catch(e){} return valid(s)?fixShape(s):null; }
+
+/* run a change on the latest online copy of the game; the snapshot then redraws every phone */
+function change(fn){
+  if(!DB||!state) return Promise.resolve(false);
+  return DB.transact(state.id,function(d){
+    var s=parseDoc(d); if(!s||fn(s)===false) return null;
+    s.saved=Date.now(); return docFor(s);
+  }).then(function(out){ return !!out; },function(){ toast('Not saved — check your connection and try again.'); return false; });
+}
+/* my own board: sent as a whole, debounced, only into the round it was made for */
+var pushT=null;
+function save(keepReady){
+  if(me<0||!state) return;
+  var x=state.draft.p[me]; if(!keepReady) x.ready=false; x.rev=Date.now();
+  persist();
+  clearTimeout(pushT); pushT=setTimeout(pushMine,350);
+}
+function pushMine(){
+  if(me<0||!state) return;
+  var R=state.rounds.length, mine=slimSide(state.draft.p[me]), at=me, my=pid;
+  change(function(s){ if(s.rounds.length!==R||s.pids[at]!==my) return false; s.draft.p[at]=mine; });
+}
+/* the online copy wins, except my own board while it is newer here (it also holds the photo's tile positions) */
+function adopt(s){
+  var old=state, sameRound=old&&old.id===s.id&&old.rounds.length===s.rounds.length;
+  var newMe=s.pids.indexOf(pid);
+  if(old&&newMe>=0&&me===newMe&&sameRound){
+    var mine=old.draft.p[me], theirs=s.draft.p[me];
+    if(mine&&(mine.rev||0)>=((theirs&&theirs.rev)||0)) s.draft.p[me]=mine;
+    else if(mine&&theirs){ theirs.pos=mine.pos; theirs.geo=mine.geo; theirs.unsure=mine.unsure; theirs.loose=mine.loose; }
+  }
+  if(!sameRound) dropShots();
+  state=s; me=newMe; persist();
+}
 
 /* ---------- grid ---------- */
 function W(rows){ return rows.reduce(function(m,r){return Math.max(m,r.length);},0); }
@@ -183764,127 +183863,202 @@ function judge(w,ovr){
   var base=inDict(w), o=ovr&&Object.prototype.hasOwnProperty.call(ovr,w)?ovr[w]:null, ok=o===null?base:o;
   return {w:w,ok:ok,pts:ok?pointsFor(w.length):0,base:base,ovr:o};
 }
-function sideItems(i){
-  var s=state.draft.p[i], items=[];
+function itemsOf(s){
+  var items=[];
   gridWords(s.rows).forEach(function(g){ if(!s.drop[g.key]){ var j=judge(g.w,s.ovr); j.key=g.key; j.dir=g.dir; j.cells=g.cells; items.push(j); } });
   s.extra.forEach(function(w,k){ var j=judge(w,s.ovr); j.xi=k; j.dir='x'; items.push(j); });
   return items;
 }
+function sideItems(i){ return itemsOf(state.draft.p[i]); }
 function wordPts(list){ return list.reduce(function(a,b){return a+b.pts;},0); }
 function badWords(list){ return list.filter(function(x){return !x.ok;}); }
 function isClean(list){ return list.length>0&&!badWords(list).length; }
-/* House rule: the first finisher gets +10 ONLY with a clean board. If not, the
-   other player gets it only if THEIR board is clean. A NOT CLEAN board never
-   gets the bonus. Decided only once BOTH boards are checked. */
-function bonusFor(out,l0,l1){
-  if(!l0.length||!l1.length) return {to:null,ready:false,why:'Decided once both boards are checked.'};
-  if(out!==0&&out!==1) return {to:null,ready:out===null,why:out===null?'Nobody finished first — no bonus.':'Pick who finished first.'};
-  var L=[l0,l1], o=1-out, A=state.names[out], B=state.names[o];
-  if(isClean(L[out])) return {to:out,ready:true,why:A+' finished first with a clean board → +'+BONUS+' '+A+'.'};
-  if(isClean(L[o])) return {to:o,ready:true,why:A+' finished first but the board is NOT CLEAN; '+B+'’s board is clean → +'+BONUS+' to '+B+'.'};
-  return {to:null,ready:true,why:A+' finished first but the board is NOT CLEAN, and so is '+B+'’s → no bonus.'};
+function active(s){ return range(N(s)).filter(function(i){ return !s.draft.sit[i]; }); }
+/* House rule: the first finisher gets +10 ONLY with a clean board. If not, it
+   passes down the finishing order to the first player whose board IS clean. A
+   NOT CLEAN board never gets the bonus. Decided once every board is checked. */
+function bonusFor(s){
+  var act=active(s), order=s.draft.order.filter(function(i){ return !s.draft.sit[i]; }), nm=s.names;
+  if(!act.length) return {to:null,ready:false,why:'Everyone is sitting out.'};
+  var lists={}; act.forEach(function(i){ lists[i]=itemsOf(s.draft.p[i]); });
+  if(act.some(function(i){ return !lists[i].length; })) return {to:null,ready:false,why:'Decided once every board is checked.'};
+  if(!order.length) return {to:null,ready:false,why:'Tap who finished first.'};
+  var skipped=[];
+  for(var k=0;k<order.length;k++){
+    var i=order[k];
+    if(isClean(lists[i])) return {to:i,ready:true,why:(skipped.length?skipped.join(', ')+(skipped.length===1?'’s board isn’t':'’s boards aren’t')+' clean, so it passes on — ':'')+nm[i]+(k?' finished '+ordinal(k+1)+' with a clean board':' finished first with a clean board')+' → +'+BONUS+' '+nm[i]+'.'};
+    skipped.push(nm[i]);
+  }
+  if(order.length>=act.length) return {to:null,ready:true,why:'No finisher had a clean board → no bonus.'};
+  return {to:null,ready:false,why:skipped.join(', ')+(skipped.length===1?'’s board isn’t':'’s boards aren’t')+' clean — tap who finished next.'};
 }
-function totals(rounds){ var t=[0,0]; (rounds||state.rounds).forEach(function(r){t[0]+=r.scores[0];t[1]+=r.scores[1];}); return t; }
-function winnerOf(t){ if(Math.max(t[0],t[1])<state.target||t[0]===t[1]) return null; return t[0]>t[1]?0:1; }
+function ordinal(n){ return n+(n%100>=11&&n%100<=13?'th':['th','st','nd','rd'][n%10]||'th'); }
+function totals(s){ s=s||state; var t=range(N(s)).map(function(){return 0;}); s.rounds.forEach(function(r){ t.forEach(function(_,i){ t[i]+=r.scores[i]||0; }); }); return t; }
+function topOf(t){ var m=Math.max.apply(null,t), who=range(t.length).filter(function(i){ return t[i]===m; }); return {max:m,who:who}; }
+function winnerOf(s,t){ var tp=topOf(t); return tp.max>=s.target&&tp.who.length===1?tp.who[0]:null; }
 var WIN_LINES=[
-  '{W} goes bananas! {L} has been thoroughly peeled.',
-  'Top banana: {W}. {L}, you’ve been split.',
-  '{W} wins the whole bunch. {L} is left holding the peel.',
+  '{W} goes bananas! Everyone else has been thoroughly peeled.',
+  'Top banana: {W}. The rest of you have been split.',
+  '{W} wins the whole bunch. Everyone else is left holding the peel.',
   'PEEL! DUMP! VICTORY! {W} rules the fruit bowl.',
-  '{W} is the big cheese of the banana stand. Better luck next bunch, {L}.'
+  '{W} is the big cheese of the banana stand. Better luck next bunch.'
 ];
-function winLine(w){ var s=WIN_LINES[Math.floor(Math.random()*WIN_LINES.length)]; return s.replace('{W}',state.names[w]).replace('{L}',state.names[1-w]); }
+function winLine(s,w){ return WIN_LINES[Math.floor(Math.random()*WIN_LINES.length)].replace('{W}',s.names[w]); }
+/* rounds store words compactly so long games stay small online: "CAT DOG !XYZ" (! = invalid) */
+function packWords(list){ return list.map(function(x){ return (x.ok?'':'!')+x.w; }).join(' '); }
+function unpackWords(str){ return String(str||'').split(' ').filter(Boolean).map(function(t){ var ok=t[0]!=='!', w=ok?t:t.slice(1); return {w:w,ok:ok,pts:ok?pointsFor(w.length):0}; }); }
+
+/* ---------- lobby ---------- */
+function myName(){ return ($('my-name').value||'').trim().slice(0,20); }
+function lobbyMsg(t){ $('lobby-msg').textContent=t||''; }
+function enter(s){ adopt(s); watchGame(); renderAll(); window.scrollTo(0,0); }
+function startGame(){
+  var nm=myName(); if(!nm){ lobbyMsg('Type your name first.'); $('my-name').focus(); return; }
+  if(!DB){ lobbyMsg(lbError||'Can’t reach the game server — check your connection.'); return; }
+  var t=parseInt($('new-target').value,10), code=newCode();
+  var s={id:code,names:[nm],pids:[pid],target:isNaN(t)?250:Math.max(50,Math.min(2000,t)),rounds:[],draft:blankDraft(1),last:null,next:null,saved:Date.now()};
+  lobbyMsg('Starting…');
+  DB.transact(code,function(d){ return d?null:docFor(s); }).then(function(out){
+    if(!out){ lobbyMsg('That code was taken — tap Start again.'); return; }
+    lobbyMsg(''); enter(s);
+  },function(){ lobbyMsg('Couldn’t start the game — check your connection.'); });
+}
+function joinGame(code,nm){
+  code=cleanCode(code); nm=(nm||'').trim().slice(0,20);
+  if(!code){ lobbyMsg('Type the game code.'); return Promise.resolve(); }
+  if(!nm){ lobbyMsg('Type your name first.'); $('my-name').focus(); return Promise.resolve(); }
+  if(!DB){ lobbyMsg(lbError||'Can’t reach the game server — check your connection.'); return Promise.resolve(); }
+  lobbyMsg('Joining…'); var why='', got=null;
+  return DB.transact(code,function(d){
+    why=''; got=null;
+    var s=parseDoc(d); if(!s){ why='No game with code '+code+' — check the code.'; return null; }
+    if(s.pids.indexOf(pid)<0){
+      if(s.names.length>=MAXP){ why='That game is full ('+MAXP+' players).'; return null; }
+      s.names.push(nm); s.pids.push(pid); s.draft.p.push(blankSide());
+    }
+    s.saved=Date.now(); got=s; return docFor(s);
+  }).then(function(out){
+    if(!out||!got){ lobbyMsg(why||'Couldn’t join — try again.'); return; }
+    lobbyMsg(''); enter(got);
+  },function(){ lobbyMsg('Couldn’t join — check your connection.'); });
+}
+function leaveGame(){
+  if(unsubGame){ unsubGame(); unsubGame=null; }
+  dropShots(); state=null; me=-1; persist(); renderAll(); window.scrollTo(0,0);
+}
+function inviteLink(){ return location.origin+location.pathname+'?join='+state.id; }
+function invite(){
+  var msg='Join my Bananagrams game: '+inviteLink()+'  (code '+state.id+')';
+  if(navigator.share) navigator.share({text:msg}).catch(function(){});
+  else { lastMsg=msg; $('res-title').textContent='Invite players'; $('res-msg').textContent=msg; $('res-sms').href='sms:?&body='+encodeURIComponent(msg); $('res-share').hidden=true; $('dlg-result').showModal(); }
+}
+$('btn-start').addEventListener('click',startGame);
+$('btn-join').addEventListener('click',function(){ joinGame($('join-code').value,myName()); });
+$('join-code').addEventListener('input',function(){ this.value=cleanCode(this.value); });
+$('btn-invite').addEventListener('click',invite);
 
 /* ---------- scoreboard ---------- */
 function renderBoard(){
-  var t=totals(), b=$('board'); b.textContent='';
-  [0,1].forEach(function(i){
-    var s=el('div','side'); s.dataset.p=i;
-    s.appendChild(el('div','name',state.names[i]));
+  var t=totals(), tp=topOf(t), b=$('board'); b.textContent='';
+  state.names.forEach(function(nm,i){
+    var s=accent(el('div','side'+(i===me?' me':'')),i);
+    s.appendChild(el('div','name',nm+(i===me?' (you)':'')));
     var tot=el('div','total num',String(t[i])); tot.appendChild(el('small','',' / '+state.target)); s.appendChild(tot);
     var pg=el('div','prog'), bar=el('i'); bar.style.width=Math.min(100,t[i]/state.target*100)+'%'; pg.appendChild(bar); s.appendChild(pg);
-    var need=state.target-t[i];
-    s.appendChild(el('div','sub', need>0 ? need+' to go'+(t[i]>t[1-i]?' · leading by '+(t[i]-t[1-i]):'') : 'Past '+state.target));
+    var need=state.target-t[i], lead=t[i]===tp.max&&tp.who.length===1&&N()>1?' · leading':'';
+    s.appendChild(el('div','sub', need>0 ? need+' to go'+lead : 'Past '+state.target));
     b.appendChild(s);
   });
   $('goal').textContent='Running score · first to '+state.target+' wins';
   $('rule-target').textContent=state.target;
   var bn=$('banner'); bn.textContent='';
-  var w=winnerOf(t), tied=Math.max(t[0],t[1])>=state.target&&t[0]===t[1];
+  var w=winnerOf(state,t), tied=tp.max>=state.target&&tp.who.length>1;
   if(w!==null||tied){
     var box=el('div','banner');
     var h=el('div'); h.style.flex='1 1 220px';
-    h.appendChild(el('h2','',w!==null?'🏆 '+state.names[w]+' wins, '+t[w]+'–'+t[1-w]:'Tied at '+t[0]+' — next round settles it'));
+    h.appendChild(el('h2','',w!==null?'🏆 '+state.names[w]+' wins with '+t[w]:'Tied at '+tp.max+' — next round settles it'));
     if(w!==null&&state.last&&state.last.winLine) h.appendChild(el('div','win-line',state.last.winLine));
     box.appendChild(h);
-    if(w!==null){ var ng=el('button','ghost','New game'); ng.addEventListener('click',newGame); box.appendChild(ng); }
+    if(w!==null){
+      var ng=el('button','ghost',state.next?'Go to the rematch':'Start a rematch');
+      ng.addEventListener('click',state.next?goNext:rematch); box.appendChild(ng);
+    }
     bn.appendChild(box);
+  }else if(state.next){
+    var nb=el('div','banner'), nh=el('h2','','A rematch has started'); nh.style.flex='1 1 220px'; nb.appendChild(nh);
+    var go=el('button','ghost','Go to the rematch'); go.addEventListener('click',goNext); nb.appendChild(go); bn.appendChild(nb);
   }
   $('round-card').hidden=(w!==null);
   renderLast();
 }
 
 /* ---------- last finalized round: running tally ---------- */
+var hiddenLast=-1;
 function renderLast(){
   var host=$('last'); host.textContent='';
   var r=state.last&&state.rounds[state.rounds.length-1];
-  if(!r||r.n!==state.last.n||state.last.dismissed) return;
+  if(!r||r.n!==state.last.n||hiddenLast===r.n) return;
   var card=el('section','card tally');
   var hd=el('div','card-hd'); hd.appendChild(el('span','eyebrow','Round '+r.n+' finalized')); card.appendChild(hd);
   var g=el('div','tally-grid');
-  [0,1].forEach(function(i){
-    var c=el('div','tcol'); c.dataset.p=i;
-    c.appendChild(el('div','who',state.names[i]));
-    c.appendChild(trow('Previous total',r.prev[i]));
-    c.appendChild(trow('Round score',r.scores[i]));
-    c.appendChild(trow('NEW TOTAL',r.prev[i]+r.scores[i],true));
+  state.names.forEach(function(nm,i){
+    if(r.scores[i]==null) return;
+    var c=accent(el('div','tcol'),i);
+    c.appendChild(el('div','who',nm));
+    c.appendChild(trow('Previous total',r.prev[i]||0));
+    c.appendChild(trow(r.sit&&r.sit[i]?'Sat out':'Round score',r.scores[i]));
+    c.appendChild(trow('NEW TOTAL',(r.prev[i]||0)+r.scores[i],true));
     g.appendChild(c);
   });
   card.appendChild(g);
   var acts=el('div','actions');
   var tx=el('button','primary','Text results'); tx.addEventListener('click',function(){ showResult(r); });
-  var ok=el('button','ghost','Hide'); ok.addEventListener('click',function(){ state.last.dismissed=true; save(); renderLast(); });
+  var ok=el('button','ghost','Hide'); ok.addEventListener('click',function(){ hiddenLast=r.n; renderLast(); });
   acts.appendChild(tx); acts.appendChild(ok); card.appendChild(acts);
   host.appendChild(card);
 }
 function trow(label,val,big){ var d=el('div','trow'+(big?' big':'')); d.appendChild(el('span','',label)); d.appendChild(el('b','num',String(val))); return d; }
 
-/* ---------- round panes ---------- */
+/* ---------- my board ---------- */
 function renderPanes(){
   var host=$('panes'); host.textContent='';
-  [0,1].forEach(function(i){
-    var pane=el('div','pane'); pane.dataset.p=i;
-    var hd=el('div','pane-hd'); hd.appendChild(el('span','dot')); hd.appendChild(el('span','who',state.names[i]));
-    hd.appendChild(el('span','sc num','0')).id='sc'+i; pane.appendChild(hd);
+  $('my-step').textContent=me>=0?'Photo of your completed board':'You’re watching this game';
+  if(me<0) { host.appendChild(el('p','hint pane','Only players can score boards. Leave this game in Setup to start or join one.')); return; }
+  var i=me;
+  var pane=accent(el('div','pane'),i);
+  var hd=el('div','pane-hd'); hd.appendChild(el('span','dot')); hd.appendChild(el('span','who',state.names[i]));
+  hd.appendChild(el('span','sc num','0')).id='sc'+i; pane.appendChild(hd);
 
-    var fi=document.createElement('input'); fi.type='file'; fi.accept='image/*'; fi.setAttribute('capture','environment'); fi.hidden=true;
-    fi.addEventListener('change',function(){ var f=fi.files&&fi.files[0]; fi.value=''; if(f) takePhoto(i,f); });
-    var slot=el('button','shot'); slot.type='button'; slot.id='shot'+i;
-    slot.addEventListener('click',function(){ if(shots[i]) lightbox(shots[i].url); else fi.click(); });
-    var up=document.createElement('input'); up.type='file'; up.accept='image/*'; up.hidden=true;
-    up.addEventListener('change',function(){ var f=up.files&&up.files[0]; up.value=''; if(f) takePhoto(i,f); });
-    pane.appendChild(slot); pane.appendChild(fi); pane.appendChild(up);
-    var upb=el('button','mini up-btn','🖼  Upload a photo instead'); upb.type='button'; upb.id='up'+i;
-    upb.addEventListener('click',function(){ up.click(); }); pane.appendChild(upb);
+  var fi=document.createElement('input'); fi.type='file'; fi.accept='image/*'; fi.setAttribute('capture','environment'); fi.hidden=true;
+  fi.addEventListener('change',function(){ var f=fi.files&&fi.files[0]; fi.value=''; if(f) takePhoto(i,f); });
+  var slot=el('button','shot'); slot.type='button'; slot.id='shot'+i;
+  slot.addEventListener('click',function(){ if(shots[i]) lightbox(shots[i].url); else fi.click(); });
+  var up=document.createElement('input'); up.type='file'; up.accept='image/*'; up.hidden=true;
+  up.addEventListener('change',function(){ var f=up.files&&up.files[0]; up.value=''; if(f) takePhoto(i,f); });
+  pane.appendChild(slot); pane.appendChild(fi); pane.appendChild(up);
+  var upb=el('button','mini up-btn','🖼  Upload a photo instead'); upb.type='button'; upb.id='up'+i;
+  upb.addEventListener('click',function(){ up.click(); }); pane.appendChild(upb);
 
-    var tools=el('div','shot-tools'); tools.id='tools'+i;
-    var bRe=el('button','mini','Retake photo'); bRe.addEventListener('click',function(){ fi.click(); });
-    var bRd=el('button','mini','Read it again'); bRd.addEventListener('click',function(){ readGrid(i); });
-    var bUp=el('button','mini','Upload a different photo'); bUp.addEventListener('click',function(){ up.click(); });
-    tools.appendChild(bRe); tools.appendChild(bRd); tools.appendChild(bUp); pane.appendChild(tools);
+  var tools=el('div','shot-tools'); tools.id='tools'+i;
+  var bRe=el('button','mini','Retake photo'); bRe.addEventListener('click',function(){ fi.click(); });
+  var bRd=el('button','mini','Read it again'); bRd.addEventListener('click',function(){ readGrid(i); });
+  var bUp=el('button','mini','Upload a different photo'); bUp.addEventListener('click',function(){ up.click(); });
+  tools.appendChild(bRe); tools.appendChild(bRd); tools.appendChild(bUp); pane.appendChild(tools);
 
-    var st=el('div','status'); st.id='st'+i; st.hidden=true; pane.appendChild(st);
-    pane.appendChild(el('div','checks')).id='ck'+i;
-    pane.appendChild(el('div','gridbox')).id='grid'+i;
-    pane.appendChild(el('div','eyebrow wl-h','Words found — tap one to correct it')).id='wl'+i;
-    pane.appendChild(el('div','wlist')).id='words'+i;
-    pane.appendChild(el('div','result')).id='res'+i;
-    host.appendChild(pane);
-  });
-  [0,1].forEach(function(i){ paintShot(i); refreshPane(i); });
+  var st=el('div','status'); st.id='st'+i; st.hidden=true; pane.appendChild(st);
+  pane.appendChild(el('div','checks')).id='ck'+i;
+  pane.appendChild(el('div','gridbox')).id='grid'+i;
+  pane.appendChild(el('div','eyebrow wl-h','Words found — tap one to correct it')).id='wl'+i;
+  pane.appendChild(el('div','wlist')).id='words'+i;
+  pane.appendChild(el('div','result')).id='res'+i;
+  var rd=el('button','ready-btn'); rd.type='button'; rd.id='ready-btn';
+  rd.addEventListener('click',function(){ var x=state.draft.p[me]; x.ready=!x.ready; save(true); updateRound(); });
+  pane.appendChild(rd);
+  host.appendChild(pane);
+  paintShot(i); if(stMsg[i]) setStatus(i,stMsg[i][0],stMsg[i][1]); refreshPane(i);
 }
 function paintShot(i){
-  var s=$('shot'+i); s.textContent='';
+  var s=$('shot'+i); if(!s) return; s.textContent='';
   var tl=$('tools'+i).children;
   tl[0].hidden=!shots[i]; tl[1].hidden=!shots[i]||busy[i];
   $('tools'+i).hidden=!shots[i]; $('up'+i).hidden=!!shots[i];
@@ -183894,7 +184068,7 @@ function paintShot(i){
   }else{
     s.className='shot';
     var ph=el('div','ph');
-    ph.appendChild(el('b','','📷  Photo of '+state.names[i]+'’s completed board'));
+    ph.appendChild(el('b','','📷  Photo of your completed board'));
     ph.appendChild(el('span','','Tap to take a photo — or upload one below'));
     s.appendChild(ph);
   }
@@ -183904,7 +184078,7 @@ function tilesEl(w,hi){
 }
 
 /* photo of one tile, cut out of the board photo and turned upright */
-var imgCache=[null,null];
+var imgCache={};
 function shotImage(i){
   var sh=shots[i]; if(!sh) return Promise.reject();
   if(imgCache[i]&&imgCache[i].url===sh.url) return imgCache[i].p;
@@ -183965,6 +184139,7 @@ function renderGrid(i){
 }
 
 function refreshPane(i){
+  if(!$('grid'+i)){ updateRound(); return; }
   var s=state.draft.p[i], items=sideItems(i);
   renderGrid(i);
 
@@ -184030,42 +184205,91 @@ function refreshPane(i){
   updateRound();
 }
 
-/* ---------- per-player results + bonus ---------- */
-function updateRound(){
-  var d=state.draft, l=[sideItems(0),sideItems(1)], bn=bonusFor(d.out,l[0],l[1]);
-  var t=totals();
-  $('round-no').textContent=String(state.rounds.length+1);
-  $('out0').textContent=state.names[0]; $('out1').textContent=state.names[1];
-  $('out0').setAttribute('aria-pressed',d.out===0); $('out1').setAttribute('aria-pressed',d.out===1);
-  [0,1].forEach(function(i){
-    var wp=wordPts(l[i]), bonus=bn.to===i?BONUS:0, tot=wp+bonus;
-    var sc=$('sc'+i); if(sc) sc.textContent=String(tot);
-    var box=$('res'+i); if(!box) return; box.textContent='';
-    if(!l[i].length) return;
-    box.appendChild(trow('Word points',wp));
-    var fb=el('div','trow'); fb.appendChild(el('span','','Finishing bonus'));
-    fb.appendChild(el('b','num',bn.ready||bn.to!=null?(bonus?'+'+BONUS:'0'):'—')); box.appendChild(fb);
-    box.appendChild(trow('ROUND TOTAL',tot,true));
-    var bad=badWords(l[i]);
-    var cs=el('div','clean '+(bad.length?'no':'ok'),bad.length?'NOT CLEAN ✗ — '+bad.map(function(x){return x.w;}).join(', '):'CLEAN BOARD ✓');
-    box.appendChild(cs);
+/* ---------- everyone's boards, finishing order, bonus ---------- */
+var openOther={};
+function renderOthers(bn){
+  var host=$('others'); host.textContent='';
+  state.names.forEach(function(nm,i){
+    var x=state.draft.p[i], sit=!!state.draft.sit[i], items=itemsOf(x), wp=wordPts(items), bad=badWords(items);
+    var row=accent(el('div','oth'+(i===me?' me':'')),i), top=el('div','oth-top');
+    top.appendChild(el('span','dot'));
+    top.appendChild(el('b','oth-name',nm+(i===me?' (you)':'')));
+    var st=sit?'sitting out':!items.length?(i===me&&busy[i]?'reading photo…':'waiting for board'):
+      items.length+(items.length===1?' word · ':' words · ')+(wp+(bn.to===i?BONUS:0))+' pts · '+(bad.length?'NOT CLEAN':'clean');
+    top.appendChild(el('span','oth-st'+(bad.length&&!sit?' no':''),st));
+    if(!sit&&items.length) top.appendChild(el('span','oth-ready'+(x.ready?' ok':''),x.ready?'✓ ready':'checking'));
+    row.appendChild(top);
+    var acts=el('div','oth-acts');
+    if(items.length&&!sit&&i!==me){
+      var sh=el('button','mini',openOther[i]?'Hide words':'See words'); sh.addEventListener('click',function(){ openOther[i]=!openOther[i]; updateRound(); }); acts.appendChild(sh);
+    }
+    var so=el('button','mini',sit?'Back in this round':'Sit out this round');
+    so.addEventListener('click',function(){ change(function(s){ if(s.draft.sit[i]) delete s.draft.sit[i]; else { s.draft.sit[i]=true; s.draft.order=s.draft.order.filter(function(k){ return k!==i; }); } }); });
+    acts.appendChild(so); row.appendChild(acts);
+    if(openOther[i]&&items.length&&!sit&&i!==me){
+      var wl=el('div','wordlist');
+      items.forEach(function(it){ var m=el('span','w-mini'+(it.ok?'':' bad')); m.appendChild(document.createTextNode(it.w)); m.appendChild(el('i','',' '+it.pts)); wl.appendChild(m); });
+      row.appendChild(wl);
+      if(x.rows.length) row.appendChild(miniGrid(x.rows));
+    }
+    host.appendChild(row);
   });
-  var pv=$('preview'); pv.textContent='';
-  if(l[0].length||l[1].length){
-    pv.appendChild(el('div','pv-b','Finishing bonus: '+bn.why));
+}
+function renderOrder(){
+  var host=$('order'); host.textContent='';
+  var order=state.draft.order;
+  state.names.forEach(function(nm,i){
+    if(state.draft.sit[i]) return;
+    var k=order.indexOf(i), b=accent(el('button','seg order-seg',(k>=0?ordinal(k+1)+' · ':'')+nm),i);
+    b.setAttribute('aria-pressed',k>=0);
+    b.addEventListener('click',function(){ change(function(s){
+      var at=s.draft.order.indexOf(i);
+      if(at>=0) s.draft.order.splice(at,1); else s.draft.order.push(i);
+    }); });
+    host.appendChild(b);
+  });
+  if(order.length){ var r=el('button','mini','Reset order'); r.addEventListener('click',function(){ change(function(s){ s.draft.order=[]; }); }); host.appendChild(r); }
+}
+function updateRound(){
+  if(!state) return;
+  var d=state.draft, bn=bonusFor(state), act=active(state);
+  $('round-no').textContent=String(state.rounds.length+1);
+  renderOthers(bn); renderOrder();
+  if(me>=0){
+    var l=sideItems(me), wp=wordPts(l), bonus=bn.to===me?BONUS:0, tot=wp+bonus;
+    var sc=$('sc'+me); if(sc) sc.textContent=String(tot);
+    var box=$('res'+me);
+    if(box){ box.textContent='';
+      if(l.length){
+        box.appendChild(trow('Word points',wp));
+        var fb=el('div','trow'); fb.appendChild(el('span','','Finishing bonus'));
+        fb.appendChild(el('b','num',bn.ready||bn.to!=null?(bonus?'+'+BONUS:'0'):'—')); box.appendChild(fb);
+        box.appendChild(trow('ROUND TOTAL',tot,true));
+        var bad=badWords(l);
+        box.appendChild(el('div','clean '+(bad.length?'no':'ok'),bad.length?'NOT CLEAN ✗ — '+bad.map(function(x){return x.w;}).join(', '):'CLEAN BOARD ✓'));
+      }
+    }
+    var rb=$('ready-btn');
+    if(rb){ var x=d.p[me]; rb.hidden=!l.length||busy[me]||!!d.sit[me]; rb.textContent=x.ready?'✓ My board is ready (tap to undo)':'My board is checked — mark it ready'; rb.classList.toggle('on',!!x.ready); }
   }
+  var pv=$('preview'); pv.textContent='';
+  if(act.some(function(i){ return itemsOf(d.p[i]).length; })) pv.appendChild(el('div','pv-b','Finishing bonus: '+bn.why));
   pv.hidden=!pv.childNodes.length;
 
+  var waiting=act.filter(function(i){ return !itemsOf(d.p[i]).length; }).map(function(i){ return state.names[i]; });
+  var unready=act.filter(function(i){ return itemsOf(d.p[i]).length&&!d.p[i].ready; }).map(function(i){ return state.names[i]; });
   var why='';
-  if(busy[0]||busy[1]) why='Still reading a photo…';
-  else if(!l[0].length&&!l[1].length) why='Take a photo of each completed board.';
-  else if(!l[0].length||!l[1].length) why='Waiting on '+state.names[l[0].length?1:0]+'’s board — the bonus is decided only after both are checked.';
-  else if(d.out===undefined) why='Pick who finished first.';
-  else why='Both of you: check the words and scores above, then finalize.';
-  var blocked=busy[0]||busy[1]||!l[0].length||!l[1].length||d.out===undefined;
-  $('score-btn').disabled=blocked; $('why-off').textContent=why;
+  if(me>=0&&busy[me]) why='Still reading your photo…';
+  else if(!act.length) why='Everyone is sitting out.';
+  else if(waiting.length) why='Waiting on '+listNames(waiting)+'’s board'+(waiting.length>1?'s':'')+'.';
+  else if(unready.length) why='Waiting on '+listNames(unready)+' to mark '+(unready.length>1?'their boards':'the board')+' ready.';
+  else if(!bn.ready) why=bn.why;
+  else why='Everyone: check the scores above, then anyone can finalize.';
+  var blocked=(me>=0&&busy[me])||!act.length||waiting.length||unready.length||!bn.ready;
+  $('score-btn').disabled=!!blocked; $('why-off').textContent=why;
   $('undo-btn').disabled=!state.rounds.length;
 }
+function listNames(a){ return a.length<3?a.join(' and '):a.slice(0,-1).join(', ')+' and '+a[a.length-1]; }
 
 /* ---------- photos + reading ---------- */
 function shrink(file){
@@ -184091,22 +184315,12 @@ function takePhoto(i,f){
   }).catch(function(){ setStatus(i,'error','That photo couldn’t be opened — try another.'); });
 }
 function setStatus(i,kind,msg){
+  stMsg[i]=msg?[kind,msg]:null;
   var st=$('st'+i); if(!st) return; st.textContent=''; st.className='status '+kind;
   if(!msg){ st.hidden=true; return; } st.hidden=false;
   if(kind==='reading') st.appendChild(el('span','sp2'));
   st.appendChild(el('span','',msg));
 }
-var PROMPT=
-"This photo shows one player's finished Bananagrams grid: letter tiles laid out as a connected crossword, probably on a table.\n\n"+
-"Transcribe the WHOLE grid as a map of rows and columns, tile by tile:\n"+
-"- One string per row, top to bottom. Use the tile's capital letter, and '.' for an empty square.\n"+
-"- Every row string must be the same length; line columns up so tiles that touch vertically share a column.\n"+
-"- Include only tiles that are PART OF the connected grid: squarely in line with the grid's rows and columns and edge-to-edge with a neighbouring grid tile. Leave out every loose tile on the table — the bunch, dumped or spare tiles, a tile sitting crooked, offset, rotated, or just near the grid without being lined up with it. Never attach a nearby loose tile to the end of a word.\n"+
-"- If you included a tile but it might be a loose tile rather than part of the grid, list it in \"stray\" with its 0-based row and column and a short note (e.g. \"sits slightly apart, angled\").\n"+
-"- Copy EXACTLY what each tile shows, misspellings included. Never correct spelling.\n"+
-"- If a tile is hard to read (blur, glare, angle, cut off, upside down, M/W, N/Z, I/L, O/Q, U/V) list it in \"unsure\" with its 0-based row and column, a short note, and the letters it might be in \"options\" (most likely first).\n\n"+
-"Reply with only JSON in this shape:\n"+
-'{"rows":["..Q..","PHONE","..I..","..Z.."],"unsure":[{"r":3,"c":2,"note":"glare on this tile","options":["Z","N"]}],"stray":[]}';
 /* On-phone reader: finds the tiles, lines them up into the grid and reads each
    letter right here on the device — nothing is sent anywhere. Close calls are
    settled with the dictionary and flagged for a one-tap check. */
@@ -184161,12 +184375,12 @@ function sideFromRead(r,px){
 function readGrid(i){
   if(!shots[i]||busy[i]) return;
   busy[i]=true; paintShot(i); setStatus(i,'reading','Reading the grid…'); refreshPane(i);
-  var sh=shots[i];
+  var sh=shots[i], R=state.rounds.length;
   var PX=null;
   shotPixels(sh).then(function(px){ PX=px;
     return new Promise(function(res,rej){ setTimeout(function(){ try{ if(!DICT) buildDict(); res(BGReader.readBoard(px,getModel())); }catch(e){ rej(e); } },40); });
   }).then(function(r){
-    if(shots[i]!==sh) return;
+    if(shots[i]!==sh||!state||state.rounds.length!==R) return;
     var side=r.rows.length?sideFromRead(r,PX):blankSide();
     pullLoose(side);
     state.draft.p[i]=side; save();
@@ -184179,93 +184393,83 @@ function readGrid(i){
   }).then(function(){ busy[i]=false; paintShot(i); refreshPane(i); });
 }
 
-
-
-/* ---------- talk to the scorer ----------
+/* ---------- talk to the scorer (inside the Claude app only) ----------
    Plain-language corrections: the player says what's wrong, Claude looks at
-   the photos and the board as read, answers, and applies the fix itself. */
+   the photo and the board as read, answers, and applies the fix itself. */
 var chatLog=[], chatBusy=false;
 function boardText(i){
   var s=state.draft.p[i], items=sideItems(i), lines=[];
-  lines.push('PLAYER '+(i+1)+': '+state.names[i]);
+  lines.push('PLAYER: '+state.names[i]);
   if(!s.rows.length) lines.push('  (no board read yet)');
   else {
     lines.push('  Board as read (row index: letters, "." = empty; columns numbered from 0):');
     s.rows.forEach(function(r,k){ lines.push('   '+k+': '+r); });
   }
-  if(s.extra.length) lines.push('  Words added by players: '+s.extra.join(', '));
+  if(s.extra.length) lines.push('  Words added by the player: '+s.extra.join(', '));
   lines.push('  Words scored: '+(items.map(function(x){ return x.w+'('+(x.dir==='h'?'across':x.dir==='v'?'down':'added')+(x.cells?' starting r'+x.cells[0][0]+' c'+x.cells[0][1]:'')+', '+(x.ok?'valid '+x.pts:'INVALID 0')+(x.ovr!==null?' by player ruling':'')+')'; }).join('; ')||'none'));
   return lines.join('\n');
 }
 var CHAT_RULES=
-"You are the scorekeeper for a two-player Bananagrams game. You read each player's board from a photo; now a player is telling you something you got wrong (or asking a question). "+
-"Look at the photo(s) attached (photo 1 = player 1's board, photo 2 = player 2's, when present) and the board data below. If the player is right, own it briefly and fix it. If the photo clearly shows otherwise, say so politely and explain. Never correct spelling to what someone meant: score what is physically on the board. "+
+"You are the scorekeeper for a Bananagrams game. You read this player's board from a photo; now the player is telling you something you got wrong (or asking a question). "+
+"Look at the photo attached (when present) and the board data below. If the player is right, own it briefly and fix it. If the photo clearly shows otherwise, say so politely and explain. Never correct spelling to what someone meant: score what is physically on the board. "+
 "Every unbroken across or down run of 2+ tiles is one word; never split a run. Scoring by length: 2=1, 3=2, 4=3, 5=5, 6=7, 7=10, 8=13, 9+=16.\n\n"+
-"Fix things ONLY with these actions (player is 1 or 2; r and c are 0-based indexes into that player's board as listed):\n"+
-'- {"do":"set_tile","player":1,"r":0,"c":8,"letter":""}  — letter "" removes a tile (e.g. a stray loose tile); a letter changes or adds one. To add beyond the edges use r or c of -1 or one past the end.\n'+
-'- {"do":"rule_word","player":2,"word":"WHEEP","valid":true}  — valid true/false overrides the dictionary; null returns it to the dictionary.\n'+
-'- {"do":"add_word","player":1,"word":"QI"} and {"do":"remove_word","player":1,"word":"QI"}  — only for words added by players.\n'+
-'- {"do":"set_first","player":1}  — who finished first (1 or 2; someone always finishes first).\n\n'+
+"Fix things ONLY with these actions (r and c are 0-based indexes into the board as listed):\n"+
+'- {"do":"set_tile","r":0,"c":8,"letter":""}  — letter "" removes a tile (e.g. a stray loose tile); a letter changes or adds one. To add beyond the edges use r or c of -1 or one past the end.\n'+
+'- {"do":"rule_word","word":"WHEEP","valid":true}  — valid true/false overrides the dictionary; null returns it to the dictionary.\n'+
+'- {"do":"add_word","word":"QI"} and {"do":"remove_word","word":"QI"}  — only for words added by the player.\n\n'+
 'Reply with only JSON: {"reply":"short friendly answer, 1-3 sentences, plain words","actions":[...]}. Use an empty actions list when nothing should change.';
 
 function renderChat(){
+  $('chat-box').hidden=!sampler||me<0;
   var log=$('chat-log'); log.textContent='';
   chatLog.forEach(function(m){ log.appendChild(el('div','msg '+m.role,m.text)); });
   if(chatBusy) log.appendChild(el('div','msg assistant pending','Looking again…'));
   log.hidden=!log.childNodes.length;
   $('chat-send').disabled=chatBusy||!sampler;
-  $('chat-in').disabled=!sampler;
-  $('chat-off').hidden=!!sampler;
   log.scrollTop=log.scrollHeight;
 }
 function applyActions(acts){
-  var done=[];
+  var done=[]; if(me<0) return done;
+  var s=state.draft.p[me];
   (Array.isArray(acts)?acts:[]).forEach(function(a){
     if(!a||typeof a!=='object') return;
-    var i=parseInt(a.player,10)-1;
-    if(a.do==='set_first'){ if(i===0||i===1){ state.draft.out=i; done.push('finished first: '+state.names[i]); } return; }
-    if(i!==0&&i!==1) return;
-    var s=state.draft.p[i];
     if(a.do==='set_tile'){
       var r=parseInt(a.r,10), c=parseInt(a.c,10); if(isNaN(r)||isNaN(c)) return;
       var L=clean(a.letter).slice(0,1), was=cell(s.rows,r,c);
       setTile(s,r+1,c+1,L);
-      done.push(state.names[i]+': '+(L?(was?was+'→'+L:'added '+L):'removed '+(was||'tile')));
+      done.push(L?(was?was+'→'+L:'added '+L):'removed '+(was||'tile'));
     }else if(a.do==='rule_word'){
       var w=clean(a.word); if(w.length<2) return;
-      if(a.valid===true||a.valid===false){ s.ovr[w]=a.valid; done.push(state.names[i]+': '+w+(a.valid?' counts':' doesn’t count')); }
-      else { delete s.ovr[w]; done.push(state.names[i]+': '+w+' back to the dictionary'); }
+      if(a.valid===true||a.valid===false){ s.ovr[w]=a.valid; done.push(w+(a.valid?' counts':' doesn’t count')); }
+      else { delete s.ovr[w]; done.push(w+' back to the dictionary'); }
     }else if(a.do==='add_word'){
-      var aw=clean(a.word); if(aw.length>=2){ s.extra.push(aw); done.push(state.names[i]+': added '+aw); }
+      var aw=clean(a.word); if(aw.length>=2){ s.extra.push(aw); done.push('added '+aw); }
     }else if(a.do==='remove_word'){
-      var rw=clean(a.word), k=s.extra.indexOf(rw); if(k>=0){ s.extra.splice(k,1); done.push(state.names[i]+': removed '+rw); }
+      var rw=clean(a.word), k=s.extra.indexOf(rw); if(k>=0){ s.extra.splice(k,1); done.push('removed '+rw); }
     }
   });
   return done;
 }
 function sendChat(){
-  var txt=($('chat-in').value||'').trim(); if(!txt||chatBusy||!sampler) return;
+  var txt=($('chat-in').value||'').trim(); if(!txt||chatBusy||!sampler||me<0) return;
   $('chat-in').value='';
   chatLog.push({role:'user',text:txt}); chatBusy=true; renderChat();
   var hist=chatLog.slice(-8).map(function(m){ return (m.role==='user'?'PLAYER: ':'YOU: ')+m.text; }).join('\n');
-  var prompt=CHAT_RULES+'\n\nCURRENT BOARDS\n'+boardText(0)+'\n'+boardText(1)+
-    '\nFinished first: '+(state.draft.out===0||state.draft.out===1?state.names[state.draft.out]:(state.draft.out===null?'nobody':'not chosen yet'))+
-    '\n\nCONVERSATION SO FAR\n'+hist+'\n\nAnswer the last PLAYER message.';
-  var imgs=imagesOK?[0,1].map(function(i){ return shots[i]&&shots[i].blob; }).filter(Boolean):[];
-  if(!imgs.length) prompt=prompt.replace('Look at the photo(s) attached (photo 1 = player 1\'s board, photo 2 = player 2\'s, when present) and the board data below.','You cannot see the photos: the boards below were read by an on-phone tile scanner and can contain misread letters. Trust what the player says the tiles show.').replace('If the photo clearly shows otherwise, say so politely and explain. ','');
+  var prompt=CHAT_RULES+'\n\nCURRENT BOARD\n'+boardText(me)+'\n\nCONVERSATION SO FAR\n'+hist+'\n\nAnswer the last PLAYER message.';
+  var imgs=imagesOK&&shots[me]&&shots[me].blob?[shots[me].blob]:[];
+  if(!imgs.length) prompt=prompt.replace('Look at the photo attached (when present) and the board data below.','You cannot see the photo: the board below was read by an on-phone tile scanner and can contain misread letters. Trust what the player says the tiles show.').replace('If the photo clearly shows otherwise, say so politely and explain. ','');
   var opts={cache:false}; if(imgs.length) opts.images=imgs;
-  if(imgs.length===1) prompt=prompt.replace('photo 1 = player 1\'s board, photo 2 = player 2\'s, when present','one photo attached: '+(shots[0]&&shots[0].blob?'player 1':'player 2')+'\'s board');
   sampler.json(prompt,opts).then(function(res){
     var reply=String((res&&res.reply)||'Done.');
     var done=applyActions(res&&res.actions);
     chatLog.push({role:'assistant',text:reply+(done.length?'\n✓ '+done.join(' · '):'')});
-    if(done.length){ save(); [0,1].forEach(function(i){ refreshPane(i); }); }
+    if(done.length){ save(); refreshPane(me); }
   }).catch(function(e){
     var c=e&&e.code;
     chatLog.push({role:'assistant',text:{
       not_granted:'I need your OK to use Claude — reload and tap Allow.',
       rate_limited:'Too many requests just now — try again in a minute.',
-      images_unavailable:'I can’t see the photos in this view.',
+      images_unavailable:'I can’t see the photo in this view.',
       session_expired:'Your Claude sign-in expired — sign in and try again.'
     }[c]||'Sorry, that didn’t go through — try again.'});
   }).then(function(){ chatBusy=false; renderChat(); });
@@ -184343,77 +184547,62 @@ var askFn=null;
 function ask(title,msg,okLabel,fn){ askFn=fn; $('ask-title').textContent=title; $('ask-msg').textContent=msg; $('ask-ok').textContent=okLabel; $('dlg-ask').showModal(); }
 $('ask-ok').addEventListener('click',function(){ var f=askFn; askFn=null; $('dlg-ask').close(); if(f) f(); });
 $('ask-cancel').addEventListener('click',function(){ askFn=null; $('dlg-ask').close(); });
-function within(p,ms){ return Promise.race([p,new Promise(function(r){ setTimeout(function(){ r(null); },ms); })]); }
 
 /* ---------- finalize ---------- */
-var finalizing=false;
 var armT=null, armed=false;
 function finMsg(t,bad){ var w=$('why-off'); w.textContent=t; w.style.color=bad?'#c0392b':''; w.style.fontWeight=bad?'600':''; }
 function disarm(){ armed=false; clearTimeout(armT); var b=$('score-btn'); b.textContent='Finalize round'; b.classList.remove('armed'); }
-function finalizeRound(){
-  try{
-    if(finalizing) return;
-    var d=state.draft, l=[sideItems(0),sideItems(1)], bn=bonusFor(d.out,l[0],l[1]);
-    if(!l[0].length||!l[1].length){ disarm(); finMsg('Both boards need words before you can finalize.',true); return; }
-    if(!bn.ready){ disarm(); finMsg(bn.why,true); return; }
-    var s0=wordPts(l[0])+(bn.to===0?BONUS:0), s1=wordPts(l[1])+(bn.to===1?BONUS:0);
-    if(!armed){
-      armed=true; var b=$('score-btn'); b.textContent='Tap again to finalize'; b.classList.add('armed');
-      finMsg(state.names[0]+' '+s0+' · '+state.names[1]+' '+s1+' — tap again to add these to the totals.');
-      clearTimeout(armT); armT=setTimeout(function(){ disarm(); updateRound(); },8000);
-      return;
-    }
-    disarm(); doFinalize(d,l,bn);
-  }catch(e){ finalizing=false; disarm(); finMsg('Finalize failed: '+(e&&e.message||e),true); }
+/* everything a finalized round keeps, worked out from one copy of the game */
+function roundFrom(s){
+  var bn=bonusFor(s), prev=totals(s), lists=s.draft.p.map(itemsOf);
+  return {n:s.rounds.length+1,ts:Date.now(),order:s.draft.order.slice(),bonusTo:bn.to,why:bn.why,prev:prev,
+    sit:s.names.map(function(_,i){ return !!s.draft.sit[i]; }),
+    boards:s.draft.p.map(function(x,i){ return s.draft.sit[i]?null:{rows:x.rows.slice(),drop:Object.assign({},x.drop),extra:x.extra.slice(),ovr:Object.assign({},x.ovr)}; }),
+    w:lists.map(function(L,i){ return s.draft.sit[i]?'':packWords(L); }),
+    wordPts:lists.map(function(L,i){ return s.draft.sit[i]?0:wordPts(L); }),
+    clean:lists.map(function(L,i){ return !s.draft.sit[i]&&isClean(L); }),
+    scores:lists.map(function(L,i){ return s.draft.sit[i]?0:wordPts(L)+(bn.to===i?BONUS:0); })};
 }
-function doFinalize(d,l,bn){
-  if(finalizing) return;
-  finalizing=true;
-  try{
-    var prev=totals();
-    var blobs=[0,1].map(function(i){ return shots[i]&&shots[i].blob?shots[i].blob:null; });
-    var r={n:state.rounds.length+1,ts:Date.now(),out:d.out,bonusTo:bn.to,why:bn.why,prev:prev,
-      photos:[0,1].map(function(i){ return shots[i]&&!shots[i].blob?(shots[i].saved||null):null; }),
-      boards:[0,1].map(function(i){ var s=d.p[i]; return {rows:s.rows.slice(),drop:Object.assign({},s.drop),extra:s.extra.slice(),ovr:Object.assign({},s.ovr)}; }),
-      words:l.map(function(L){ return L.map(function(x){return {w:x.w,dir:x.dir,ok:x.ok,pts:x.pts};}); }),
-      wordPts:[wordPts(l[0]),wordPts(l[1])],
-      clean:[isClean(l[0]),isClean(l[1])],
-      scores:[wordPts(l[0])+(bn.to===0?BONUS:0), wordPts(l[1])+(bn.to===1?BONUS:0)]};
-    state.rounds.push(r);
-    var w=winnerOf(totals());
-    state.last={n:r.n,winLine:w!==null?winLine(w):''};
-    [0,1].forEach(function(i){ if(shots[i]&&shots[i].blob) try{ URL.revokeObjectURL(shots[i].url); }catch(e){} });
-    shots=[null,null]; fixing=[false,false]; state.draft=blankDraft(); chatLog=[];
-    save();
-  }catch(e){ finalizing=false; finMsg('Finalize failed: '+(e&&e.message||e),true); return; }
-  finalizing=false;
-  try{ renderAll(); }catch(e){ finMsg('Round saved, but the screen didn’t refresh: '+(e&&e.message||e),true); }
-  try{ window.scrollTo(0,0); }catch(e){}
-  /* photos upload in the background; the round is already saved */
-  if(assets) blobs.forEach(function(bl,i){
-    if(!bl) return;
-    try{ within(assets.upload(bl),20000).then(function(a){
-      if(a&&a.url){ r.photos[i]=a.url; save(); try{ renderHistory(); }catch(e){} }
-    }).catch(function(){}); }catch(e){}
-  });
+function finalizeRound(){
+  var bn=bonusFor(state);
+  if(!bn.ready){ disarm(); finMsg(bn.why,true); return; }
+  var r=roundFrom(state);
+  if(!armed){
+    armed=true; var b=$('score-btn'); b.textContent='Tap again to finalize'; b.classList.add('armed');
+    finMsg(state.names.map(function(nm,i){ return nm+' '+r.scores[i]; }).join(' · ')+' — tap again to add these to the totals.');
+    clearTimeout(armT); armT=setTimeout(function(){ disarm(); updateRound(); },8000);
+    return;
+  }
+  disarm();
+  var R=state.rounds.length;
+  $('score-btn').disabled=true; finMsg('Saving…');
+  change(function(s){
+    if(s.rounds.length!==R) return false;
+    var b2=bonusFor(s); if(!b2.ready) return false;
+    var nr=roundFrom(s); s.rounds.push(nr);
+    var w=winnerOf(s,totals(s));
+    s.last={n:nr.n,winLine:w!==null?winLine(s,w):''};
+    s.draft=blankDraft(N(s));
+  }).then(function(ok){ if(ok) window.scrollTo(0,0); else updateRound(); });
 }
 function messageFor(r){
-  var N=state.names, t=[r.prev[0]+r.scores[0],r.prev[1]+r.scores[1]];
+  var NM=state.names, t=NM.map(function(_,i){ return (r.prev[i]||0)+(r.scores[i]||0); });
   var lines=['🍌 BANANAGRAMS — ROUND '+r.n];
-  [0,1].forEach(function(i){
-    lines.push('',N[i].toUpperCase());
-    r.words[i].forEach(function(x){ lines.push(x.w+' — '+(x.ok?x.pts:'0 ✗ invalid')); });
+  NM.forEach(function(nm,i){
+    if(r.scores[i]==null) return;
+    lines.push('',nm.toUpperCase());
+    if(r.sit&&r.sit[i]){ lines.push('Sat out this round'); return; }
+    unpackWords(r.w[i]).forEach(function(x){ lines.push(x.w+' — '+(x.ok?x.pts:'0 ✗ invalid')); });
     lines.push('Word Points: '+r.wordPts[i]);
     lines.push('Finishing Bonus: '+(r.bonusTo===i?'+'+BONUS:'0'));
     lines.push('ROUND TOTAL: '+r.scores[i]);
     lines.push('Board Status: '+(r.clean[i]?'CLEAN ✓':'NOT CLEAN ✗'));
   });
-  lines.push('','Bonus: '+r.why,'');
-  [0,1].forEach(function(i){ lines.push(N[i]+': '+r.prev[i]+' + '+r.scores[i]+' = '+t[i]); });
-  lines.push('','RUNNING SCORE','  '+N[0]+': '+t[0],'  '+N[1]+': '+t[1]);
-  var w=winnerOf(t);
-  if(w!==null) lines.push('','🏆 '+N[w]+' WINS! '+((state.last&&state.last.n===r.n&&state.last.winLine)||''));
-  else if(Math.max(t[0],t[1])>=state.target) lines.push('','Tied past '+state.target+' — next round decides it.');
+  lines.push('','Bonus: '+r.why,'','RUNNING SCORE');
+  NM.forEach(function(nm,i){ lines.push('  '+nm+': '+t[i]); });
+  var w=winnerOf(state,t), tp=topOf(t);
+  if(w!==null) lines.push('','🏆 '+NM[w]+' WINS! '+((state.last&&state.last.n===r.n&&state.last.winLine)||''));
+  else if(tp.max>=state.target) lines.push('','Tied past '+state.target+' — next round decides it.');
   else lines.push('First to '+state.target+'.');
   return lines.join('\n');
 }
@@ -184426,7 +184615,7 @@ function showResult(r){
   $('res-share').hidden=!navigator.share;
   $('dlg-result').showModal();
 }
-function toast(m){ var t=el('div','toast',m); document.body.appendChild(t); setTimeout(function(){t.remove();},2200); }
+function toast(m){ var t=el('div','toast',m); document.body.appendChild(t); setTimeout(function(){t.remove();},2600); }
 $('res-copy').addEventListener('click',function(){
   var done=function(){ toast('Copied — paste it into a text.'); };
   function fallbackCopy(){
@@ -184446,30 +184635,34 @@ function miniGrid(rows){
 }
 function renderHistory(){
   var h=$('history'); h.textContent='';
-  if(!state.rounds.length){ h.appendChild(el('div','empty','Finalized rounds show up here with photos, boards, every word and the running totals.')); return; }
+  if(!state.rounds.length){ h.appendChild(el('div','empty','Finalized rounds show up here with boards, every word and the running totals.')); return; }
   state.rounds.slice().reverse().forEach(function(r){
     var wrap=el('div','round'), hd=el('button','round-hd'); hd.type='button';
     hd.appendChild(el('span','rn','R'+r.n));
+    var top=Math.max.apply(null,r.scores.map(function(x){ return x||0; }));
     var sc=el('div','rscore');
-    sc.appendChild(el('span',r.scores[0]>r.scores[1]?'w':'',String(r.scores[0]))); sc.appendChild(el('span','dash','–'));
-    sc.appendChild(el('span',r.scores[1]>r.scores[0]?'w':'',String(r.scores[1]))); hd.appendChild(sc);
+    state.names.forEach(function(nm,i){
+      if(r.scores[i]==null) return;
+      if(sc.childNodes.length) sc.appendChild(el('span','dash','·'));
+      sc.appendChild(el('span',r.scores[i]===top&&top>0?'w':'',nm.split(' ')[0]+' '+r.scores[i]));
+    });
+    hd.appendChild(sc);
     hd.appendChild(el('div','rmeta',new Date(r.ts).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+(r.bonusTo!=null?' · +'+BONUS+' '+state.names[r.bonusTo]:'')));
     wrap.appendChild(hd);
     var body=el('div','round-body'); body.hidden=true;
-    body.appendChild(el('p','hint','Finished first: '+(r.out===0||r.out===1?state.names[r.out]:'nobody')+'. '+r.why));
-    [0,1].forEach(function(i){
-      var rs=el('div','rside'), rw=el('div','rw'); rs.dataset.p=i;
-      rw.appendChild(el('b','',state.names[i]));
+    body.appendChild(el('p','hint',(r.order&&r.order.length?'Finishing order: '+r.order.map(function(i){ return state.names[i]; }).join(', ')+'. ':'')+r.why));
+    state.names.forEach(function(nm,i){
+      if(r.scores[i]==null) return;
+      var rs=accent(el('div','rside'),i), rw=el('div','rw');
+      rw.appendChild(el('b','',nm));
+      if(r.sit&&r.sit[i]){ rw.appendChild(el('span','hint','sat out')); rs.appendChild(rw); body.appendChild(rs); return; }
       rw.appendChild(el('span','num',r.wordPts[i]+' + '+(r.bonusTo===i?BONUS:0)+' = '+r.scores[i]+' pts'));
       rw.appendChild(el('span',r.clean[i]?'bonus-tag':'bad-tag',r.clean[i]?'CLEAN ✓':'NOT CLEAN ✗'));
-      rw.appendChild(el('span','hint','total '+r.prev[i]+' → '+(r.prev[i]+r.scores[i])));
+      rw.appendChild(el('span','hint','total '+(r.prev[i]||0)+' → '+((r.prev[i]||0)+r.scores[i])));
       rs.appendChild(rw);
-      var media=el('div','rmedia');
-      if(r.photos&&r.photos[i]){ var im=document.createElement('img'); im.src=r.photos[i]; im.alt=state.names[i]+' board, round '+r.n; im.className='rthumb'; im.addEventListener('click',function(){ lightbox(im.src); }); media.appendChild(im); }
-      if(r.boards&&r.boards[i]&&r.boards[i].rows.length) media.appendChild(miniGrid(r.boards[i].rows));
-      if(media.childNodes.length) rs.appendChild(media);
+      if(r.boards&&r.boards[i]&&r.boards[i].rows.length){ var media=el('div','rmedia'); media.appendChild(miniGrid(r.boards[i].rows)); rs.appendChild(media); }
       var wl=el('div','wordlist');
-      r.words[i].forEach(function(x){ var m=el('span','w-mini'+(x.ok?'':' bad')); m.appendChild(document.createTextNode(x.w)); m.appendChild(el('i','',' '+x.pts)); wl.appendChild(m); });
+      unpackWords(r.w[i]).forEach(function(x){ var m=el('span','w-mini'+(x.ok?'':' bad')); m.appendChild(document.createTextNode(x.w)); m.appendChild(el('i','',' '+x.pts)); wl.appendChild(m); });
       rs.appendChild(wl); body.appendChild(rs);
     });
     var rs2=el('button','mini','Text this round’s results'); rs2.style.marginTop='10px'; rs2.addEventListener('click',function(){ showResult(r); });
@@ -184485,76 +184678,84 @@ function lightbox(src){
   var lb=el('div'); lb.id='lightbox'; var im=document.createElement('img'); im.src=src; im.alt='Board photo';
   lb.appendChild(im); lb.addEventListener('click',function(){ lb.remove(); }); document.body.appendChild(lb);
 }
-function renderAll(){ renderBoard(); renderPanes(); renderHistory(); updateRound(); renderChat(); renderLeaderboard(); }
-function setOut(v){ state.draft.out=v; save(); updateRound(); }
-function dropShots(){ chatLog=[]; [0,1].forEach(function(i){ if(shots[i]&&shots[i].blob) URL.revokeObjectURL(shots[i].url); }); shots=[null,null]; fixing=[false,false]; }
-function newGame(){
+function renderAll(){
+  var inGame=!!state;
+  $('lobby').hidden=inGame; $('game').hidden=!inGame; $('btn-setup').hidden=!inGame;
+  if(inGame){
+    $('game-code').textContent=state.id;
+    renderBoard(); renderPanes(); renderHistory(); updateRound(); renderChat();
+  }
+  renderLeaderboard();
+}
+function dropShots(){ chatLog=[]; Object.keys(shots).forEach(function(i){ if(shots[i]&&shots[i].blob) URL.revokeObjectURL(shots[i].url); }); shots={}; fixing={}; stMsg={}; }
+/* a rematch is a new game with the same players; the old one points to it so every phone can follow */
+function rematch(){
   if($('dlg-setup').open) $('dlg-setup').close();
-  ask('Start a new game?','Running scores go back to 0. The finished game stays on the leaderboard.','New game',function(){
-    state.rounds=[]; state.draft=blankDraft(); state.last=null; dropShots();
-    state.id=newId(); watchGame();
-    save(); renderAll();
+  ask('Start a rematch?','Same players, scores back to 0. This game stays on the leaderboard.','Rematch',function(){
+    var old=state, code=newCode();
+    var s={id:code,names:old.names.slice(),pids:old.pids.slice(),target:old.target,rounds:[],draft:blankDraft(N(old)),last:null,next:null,saved:Date.now()};
+    DB.transact(code,function(d){ return d?null:docFor(s); }).then(function(out){
+      if(!out){ toast('Couldn’t start the rematch — try again.'); return; }
+      change(function(o){ o.next=code; }); enter(s);
+    },function(){ toast('Couldn’t start the rematch — check your connection.'); });
   });
 }
-$('out0').addEventListener('click',function(){ setOut(0); });
-$('out1').addEventListener('click',function(){ setOut(1); });
+function goNext(){
+  var code=state.next; if(!code) return;
+  joinGame(code,state.names[me]||myName()||'Player');
+}
 $('score-btn').addEventListener('click',finalizeRound);
 $('clear-btn').addEventListener('click',function(){
-  ask('Clear this round?','This clears both photos and boards.','Clear',function(){ dropShots(); state.draft=blankDraft(); save(); renderAll(); });
+  if(me<0) return;
+  ask('Clear your board?','This clears your photo and board for this round.','Clear',function(){ dropShots(); state.draft.p[me]=blankSide(); save(); renderAll(); });
 });
 $('undo-btn').addEventListener('click',function(){
   var r=state.rounds[state.rounds.length-1]; if(!r) return;
-  ask('Undo round '+r.n+'?','Round '+r.n+' ('+r.scores[0]+'–'+r.scores[1]+') comes off the running totals and goes back to review so you can fix it and finalize again.','Undo round',function(){
-  state.rounds.pop(); state.last=null; dropShots();
-  state.draft={out:r.out,p:[0,1].map(function(i){
-    var b=r.boards&&r.boards[i], s=blankSide();
-    if(b){ s.rows=b.rows.slice(); s.drop=Object.assign({},b.drop); s.extra=b.extra.slice(); s.ovr=Object.assign({},b.ovr); }
-    else { s.extra=r.words[i].map(function(x){return x.w;}); r.words[i].forEach(function(x){ if(x.ok!==inDict(x.w)) s.ovr[x.w]=x.ok; }); }
-    return s; })};
-  shots=[0,1].map(function(i){ return r.photos&&r.photos[i]?{url:r.photos[i],blob:null,saved:r.photos[i]}:null; });
-  save(); renderAll(); $('round-card').scrollIntoView({behavior:'smooth'});
+  ask('Undo round '+r.n+'?','Round '+r.n+' comes off the running totals and goes back to review for everyone, so you can fix it and finalize again.','Undo round',function(){
+    var R=state.rounds.length;
+    change(function(s){
+      if(s.rounds.length!==R) return false;
+      var x=s.rounds.pop(); s.last=null;
+      s.draft=blankDraft(N(s)); s.draft.order=(x.order||[]).slice();
+      s.draft.p.forEach(function(side,i){
+        if(x.sit&&x.sit[i]){ s.draft.sit[i]=true; return; }
+        var b=x.boards&&x.boards[i];
+        if(b){ side.rows=b.rows.slice(); side.drop=Object.assign({},b.drop); side.extra=b.extra.slice(); side.ovr=Object.assign({},b.ovr); }
+        else if(x.w&&x.w[i]){ unpackWords(x.w[i]).forEach(function(y){ side.extra.push(y.w); if(y.ok!==inDict(y.w)) side.ovr[y.w]=y.ok; }); }
+        side.rev=Date.now();
+      });
+    }).then(function(ok){ if(ok) $('round-card').scrollIntoView({behavior:'smooth'}); });
   });
 });
-$('btn-setup').addEventListener('click',function(){ $('n0').value=state.names[0]; $('n1').value=state.names[1]; $('tg').value=state.target; $('dlg-setup').showModal(); });
+$('btn-setup').addEventListener('click',function(){ $('n0').value=me>=0?state.names[me]:''; $('n0').disabled=me<0; $('tg').value=state.target; $('dlg-setup').showModal(); });
 $('setup-done').addEventListener('click',function(){
-  state.names[0]=($('n0').value||'').trim()||'Player 1'; state.names[1]=($('n1').value||'').trim()||'Player 2';
-  var t=parseInt($('tg').value,10); state.target=isNaN(t)?250:Math.max(50,Math.min(2000,t));
-  save(); renderAll(); $('dlg-setup').close();
+  var nm=($('n0').value||'').trim().slice(0,20), t=parseInt($('tg').value,10), tg=isNaN(t)?state.target:Math.max(50,Math.min(2000,t)), at=me, my=pid;
+  $('dlg-setup').close();
+  if((at>=0&&nm&&nm!==state.names[at])||tg!==state.target) change(function(s){ if(at>=0&&nm&&s.pids[at]===my) s.names[at]=nm; s.target=tg; });
 });
-$('btn-newgame').addEventListener('click',newGame);
+$('btn-rematch').addEventListener('click',rematch);
+$('btn-leave').addEventListener('click',function(){
+  $('dlg-setup').close();
+  ask('Leave this game?','You can come back any time with code '+state.id+'.','Leave',leaveGame);
+});
 $('btn-rules').addEventListener('click',function(){ $('dlg-rules').showModal(); });
 $('btn-lb').addEventListener('click',function(){ $('lb').scrollIntoView({behavior:'smooth'}); });
 $('rules-done').addEventListener('click',function(){ $('dlg-rules').close(); });
 
 /* test hook (no effect in normal use) */
-window.__bg={applyActions:applyActions,boardText:boardText,state:state,gridWords:gridWords,pullLoose:pullLoose,refresh:function(){ save(); renderAll(); }};
+window.__bg={applyActions:applyActions,boardText:boardText,get state(){ return state; },get me(){ return me; },gridWords:gridWords,pullLoose:pullLoose,bonusFor:bonusFor,roundFrom:roundFrom,
+  refresh:function(){ save(); renderAll(); }};
 
-/* ---------- shared leaderboard ----------
-   Every game is its own document under games/. This phone keeps the id of the
-   game it is scoring; tapping another game on the leaderboard follows that game
-   here, so both players can score and watch the same running totals. */
+/* ---------- live game + shared leaderboard ----------
+   Every game is its own document under games/<code>. */
 function watchGame(){
-  if(!DB) return;
+  if(!DB||!state) return;
   if(unsubGame){ unsubGame(); unsubGame=null; }
-  gameDoc=DB.doc('games/'+state.id);
-  unsubGame=gameDoc.onSnapshot(function(snap){
-    var d=snap.exists&&snap.data(), o=null;
-    try{ o=d&&d.state?JSON.parse(d.state):null; }catch(e){}
-    if(o&&o.id===state.id&&(o.saved||0)>(state.saved||0)&&adopt(o)){
-      try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){}
-      renderAll();
-    }else if(!d&&state.saved) pushDb();
-  },function(){});
-}
-function followGame(g){
-  if(g.id===state.id) return;
-  var o=null; try{ o=JSON.parse(g.state); }catch(e){}
-  if(!o) return;
-  o.id=g.id;
-  ask('Follow this game?',(g.names||[]).join(' vs ')+' — this phone will show and score that game. Your current game stays on the leaderboard.','Follow',function(){
-    dropShots(); state.saved=0; adopt(o); watchGame();
-    try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){}
-    renderAll(); window.scrollTo({top:0,behavior:'smooth'});
+  var code=state.id;
+  unsubGame=DB.watch(code,function(d){
+    if(!state||state.id!==code) return;
+    var s=parseDoc(d); if(!s) return;
+    adopt(s); renderAll();
   });
 }
 function nameKey(n){ return String(n||'').trim().toLowerCase(); }
@@ -184569,13 +184770,12 @@ function renderLeaderboard(){
   if(!DB){ note.textContent=lbError||'The shared leaderboard isn’t switched on for this copy yet.'; return; }
   if(!lbGames){ note.textContent='Loading the shared leaderboard…'; return; }
   note.textContent='Every game played from this link, live. Wins = games won / played · Avg and Best = points per round. Same name = same player.';
-  if(lbReadOnly) body.appendChild(el('p','lb-warn','You can see the leaderboard, but your games aren’t being saved to it. Ask the person who runs this game to check its settings.'));
   var games=lbGames.filter(function(g){ return g.rounds>0&&Array.isArray(g.names)&&Array.isArray(g.totals); });
   if(!games.length){ body.appendChild(el('div','empty','No games yet. Finalize a round and it shows up here for everyone.')); return; }
   var P={};
-  games.forEach(function(g){ [0,1].forEach(function(i){
-    var k=nameKey(g.names[i]); if(!k) return;
-    var p=P[k]||(P[k]={name:String(g.names[i]).trim(),games:0,wins:0,points:0,rounds:0,best:0});
+  games.forEach(function(g){ g.names.forEach(function(nm,i){
+    var k=nameKey(nm); if(!k) return;
+    var p=P[k]||(P[k]={name:String(nm).trim(),games:0,wins:0,points:0,rounds:0,best:0});
     p.games++; p.points+=g.totals[i]||0; p.rounds+=g.rounds; if(g.winner===i) p.wins++;
     p.best=Math.max(p.best,(g.best&&g.best[i])||0);
   }); });
@@ -184591,24 +184791,24 @@ function renderLeaderboard(){
     bd.appendChild(tr); });
   tb.appendChild(bd);
   var sc=el('div','lb-scroll'); sc.appendChild(tb); body.appendChild(sc);
-  body.appendChild(el('div','eyebrow','Games — tap one to follow it on this phone')).style.marginTop='16px';
+  body.appendChild(el('div','eyebrow',state?'Games':'Games — tap one in progress to join it')).style.marginTop='16px';
   var gl=el('div','lb-games');
   games.forEach(function(g){
-    var b=el('button','lb-game'+(g.id===state.id?' mine':'')); b.type='button';
+    var mine=state&&g.id===state.id, b=el('button','lb-game'+(mine?' mine':'')); b.type='button';
     var m=el('div','gm'), line=el('div');
-    [0,1].forEach(function(i){ if(i) line.appendChild(document.createTextNode('  ·  '));
-      line.appendChild(el(g.winner===i?'b':'span','',String(g.names[i])+' '+g.totals[i])); });
+    g.names.forEach(function(nm,i){ if(i) line.appendChild(document.createTextNode('  ·  '));
+      line.appendChild(el(g.winner===i?'b':'span','',String(nm)+' '+(g.totals[i]||0))); });
     m.appendChild(line);
-    m.appendChild(el('div','gs',g.rounds+' round'+(g.rounds===1?'':'s')+' · to '+g.target+' · '+(g.winner>=0?'finished':'in progress')+' · '+ago(g.saved||0)));
+    m.appendChild(el('div','gs',g.rounds+' round'+(g.rounds===1?'':'s')+' · to '+g.target+' · '+(g.winner>=0?'finished':'in progress · code '+g.id)+' · '+ago(g.saved||0)));
     b.appendChild(m);
-    if(g.id===state.id) b.appendChild(el('span','tag','This phone'));
-    b.addEventListener('click',function(){ followGame(g); });
+    if(mine) b.appendChild(el('span','tag','This game'));
+    b.addEventListener('click',function(){ if(state||g.winner>=0) return; $('join-code').value=g.id; $('lobby').scrollIntoView({behavior:'smooth'}); $('my-name').focus(); });
     gl.appendChild(b);
   });
   body.appendChild(gl);
 }
 
-/* Outside Claude (e.g. GitHub Pages) the leaderboard is kept in Firebase.
+/* Outside Claude (e.g. GitHub Pages) games are kept in Firebase.
    Paste the web app config from the Firebase console here; null turns it off. */
 var FIREBASE={
   apiKey:"AIzaSyAZHx61X7Eh9rVL62N9juocoQRZbFPS4DU",
@@ -184618,47 +184818,60 @@ var FIREBASE={
   messagingSenderId:"665533055457",
   appId:"1:665533055457:web:d093f201a5f95c7efad2a0"
 };
-function startDb(db){
-  DB=db; watchGame();
-  db.collection('games').orderBy('saved','desc').limit(500).onSnapshot(function(q){
-    lbGames=q.docs.map(function(d){ var o=d.data()||{}; o.id=d.id; return o; }); renderLeaderboard();
-  },function(){ lbError='The leaderboard couldn’t load. Reopen the page to try again.'; DB=null; lbGames=null; renderLeaderboard(); });
-  renderLeaderboard();
+function startDb(adapter){
+  DB=adapter; watchGame();
+  DB.list(function(games){ lbGames=games; renderLeaderboard(); },
+    function(){ lbError='The leaderboard couldn’t load. Reopen the page to try again.'; lbGames=null; renderLeaderboard(); });
+  renderLeaderboard(); afterDb();
 }
-/* Firebase wrapped in the same small shape as Claude's db, so the rest of the
-   app doesn't care which one it is talking to. */
+/* both stores are wrapped in the same three calls: watch a game, change it in a transaction, list games */
+function claudeAdapter(db){ return {
+  watch:function(code,next){ return db.doc('games/'+code).onSnapshot(function(sn){ next(sn.exists?sn.data():null); },function(){}); },
+  transact:function(code,fn){ var ref=db.doc('games/'+code); return ref.get().then(function(sn){ var out=fn(sn.exists?sn.data():null); return out?ref.set(out).then(function(){ return out; }):null; }); },
+  list:function(next,err){ return db.collection('games').orderBy('saved','desc').limit(500).onSnapshot(function(q){ next(q.docs.map(function(d){ var o=d.data()||{}; o.id=d.id; return o; })); },err); }
+}; }
 function startFirebase(){
   var V='https://www.gstatic.com/firebasejs/10.12.2/';
-  lbError='Loading the shared leaderboard…'; renderLeaderboard();
+  lbError='Loading…'; renderLeaderboard();
   Promise.all([import(V+'firebase-app.js'),import(V+'firebase-firestore.js')]).then(function(m){
     var F=m[1], fs=F.getFirestore(m[0].initializeApp(FIREBASE));
-    function wrapDoc(sn){ return {id:sn.id,exists:sn.exists(),data:function(){ return sn.data(); }}; }
-    function errOf(e){ return {code:e&&e.code==='permission-denied'?'invalid_argument':'unavailable'}; }
+    function ref(code){ return F.doc(fs,'games',code); }
     startDb({
-      doc:function(path){ var ref=F.doc(fs,path); return {
-        set:function(d){ return F.setDoc(ref,d).catch(function(e){ throw errOf(e); }); },
-        onSnapshot:function(next,err){ return F.onSnapshot(ref,function(sn){ next(wrapDoc(sn)); },function(e){ if(err) err(errOf(e)); }); } }; },
-      collection:function(c){ return {orderBy:function(f,dir){ return {limit:function(n){ return {
-        onSnapshot:function(next,err){ return F.onSnapshot(F.query(F.collection(fs,c),F.orderBy(f,dir),F.limit(n)),
-          function(q){ next({docs:q.docs.map(wrapDoc)}); },function(e){ if(err) err(errOf(e)); }); } }; } }; } }; }
+      watch:function(code,next){ return F.onSnapshot(ref(code),function(sn){ next(sn.exists()?sn.data():null); },function(){}); },
+      transact:function(code,fn){ return F.runTransaction(fs,function(t){ return t.get(ref(code)).then(function(sn){ var out=fn(sn.exists()?sn.data():null); if(out) t.set(ref(code),out); return out; }); }); },
+      list:function(next,err){ return F.onSnapshot(F.query(F.collection(fs,'games'),F.orderBy('saved','desc'),F.limit(500)),
+        function(q){ next(q.docs.map(function(d){ var o=d.data()||{}; o.id=d.id; return o; })); },err); }
     });
-  }).catch(function(){ lbError='The leaderboard couldn’t load. Check your connection and reopen the page.'; renderLeaderboard(); });
+  }).catch(function(){ lbError='Can’t reach the game server — check your connection and reopen the page.'; renderLeaderboard(); lobbyMsg(lbError); });
+}
+/* an invite link (?join=CODE) fills in the code, or offers to switch games */
+function afterDb(){
+  var code=cleanCode(new URLSearchParams(location.search).get('join'));
+  if(!code) return;
+  try{ history.replaceState(null,'',location.pathname); }catch(e){}
+  if(!state){ $('join-code').value=code; if(myName()) joinGame(code,myName()); else { lobbyMsg('Type your name and tap Join to play in game '+code+'.'); $('my-name').focus(); } return; }
+  if(state.id!==code) ask('Join game '+code+'?','You’ll leave game '+state.id+' on this phone (you can come back with its code).','Join',function(){
+    var nm=me>=0?state.names[me]:''; leaveGame(); $('join-code').value=code;
+    if(nm){ $('my-name').value=nm; joinGame(code,nm); } else { lobbyMsg('Type your name and tap Join.'); $('my-name').focus(); }
+  });
 }
 
 /* ---------- boot ---------- */
-loadLocal(); renderAll();
+loadLocal();
+try{ var nmSaved=localStorage.getItem(KEY+'.name'); if(nmSaved) $('my-name').value=nmSaved; }catch(e){}
+$('my-name').addEventListener('change',function(){ try{ localStorage.setItem(KEY+'.name',myName()); }catch(e){} });
+renderAll();
 setTimeout(function(){
   buildDict();
   $('dict-status').textContent=DICT.size.toLocaleString()+' words';
   $('dict-count').textContent=DICT.size.toLocaleString();
-  [0,1].forEach(function(i){ refreshPane(i); });
+  if(state&&me>=0) refreshPane(me);
 },30);
 if(window.claude&&window.claude.use){
-  window.claude.use('sample').then(function(s){ sampler=s||null; [0,1].forEach(function(i){ paintShot(i); }); renderChat();
+  window.claude.use('sample').then(function(s){ sampler=s||null; renderChat();
     if(sampler&&sampler.limits) sampler.limits().then(function(l){ imagesOK=!!(l&&l.images); }).catch(function(){}); }).catch(function(){});
-  window.claude.use('assets').then(function(a){ assets=a||null; }).catch(function(){});
   window.claude.use('db').then(function(db){
-    if(db) startDb(db); else if(FIREBASE) startFirebase();
+    if(db) startDb(claudeAdapter(db)); else if(FIREBASE) startFirebase();
     else{ lbError='Sign in to Claude to see and join the shared leaderboard.'; renderLeaderboard(); }
   }).catch(function(){ if(FIREBASE) startFirebase(); });
 }else if(FIREBASE) startFirebase();
