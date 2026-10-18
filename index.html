@@ -165,6 +165,34 @@ textarea.typed{width:100%;min-height:90px;margin-top:9px;border:1px solid var(--
 .w-mini i{font-style:normal;color:var(--muted);font-weight:400}
 .bonus-tag{font-size:11.5px;font-weight:700;color:var(--good)}
 .lb{margin-top:26px}
+.shot.filled img{max-height:150px;background:var(--surface-2)}
+.be-hd b{display:block;font-size:15px}
+.be-hd .hint{margin:2px 0 0;font-size:13px}
+.be-wrap{overflow-x:auto;margin-top:10px;padding:10px 4px;border-radius:12px;background:var(--surface-2)}
+.be-grid{display:grid;gap:4px;width:max-content;margin:0 auto}
+.be-grid .gt{width:var(--cs);height:var(--cs);font-size:calc(var(--cs) * .56);border-radius:7px;cursor:pointer;box-shadow:0 1px 0 var(--tile-edge)}
+.be-grid .gt.add{background:transparent;border:1.5px dashed var(--line-strong);color:var(--muted);font-weight:600;box-shadow:none}
+.be-grid .gt.blank{visibility:hidden}
+.be-grid .gt.badw{background:var(--bad-soft);border:2px solid var(--bad);color:var(--bad);outline:none}
+.be-grid .gt.unsure{background:var(--warn-soft);border:2px solid var(--warn);color:var(--ink)}
+.be-key{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--muted)}
+.be-key i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.probs{margin-top:10px;display:grid;gap:6px}
+.prob{font-size:13.5px;color:var(--bad);background:var(--bad-soft);border-radius:9px;padding:8px 10px}
+.prob b{letter-spacing:.06em}
+.prob button{margin-left:6px;background:none;border:none;padding:0;color:var(--ink-2);text-decoration:underline;font:inherit;font-weight:600}
+.wchips{display:flex;flex-wrap:wrap;gap:6px}
+.wchip{border:1px solid var(--line-strong);border-radius:999px;padding:5px 11px;font-weight:700;font-size:13.5px;letter-spacing:.04em;background:var(--paper);color:var(--ink)}
+.wchip small{font-weight:600;color:var(--good);margin-left:5px;letter-spacing:0}
+.wchip.bad{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.wchip.bad small{color:var(--bad)}
+.keys{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:4px}
+.keys button{height:46px;font-family:"Bricolage Grotesque",sans-serif;font-size:21px;font-weight:800;border-radius:9px;border:1px solid var(--tile-edge);background:var(--tile);color:var(--tile-ink);padding:0}
+.keys button.cur{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.waitlist{flex-basis:100%;display:grid;gap:4px;margin-top:2px}
+.waitlist div{font-size:13.5px;color:var(--ink-2)}
+.waitlist .ok{color:var(--good);font-weight:600}
+.waitlist .next{color:var(--ink);font-weight:700;margin-top:4px}
 .side.me{box-shadow:inset 0 0 0 2px var(--accent),var(--shadow)}
 .gamebar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:9px 12px;font-size:13px;color:var(--muted)}
 .gamebar b{font-family:"Bricolage Grotesque",sans-serif;font-size:20px;letter-spacing:.12em;color:var(--ink)}
@@ -190,8 +218,9 @@ textarea.typed{width:100%;min-height:90px;margin-top:9px;border:1px solid var(--
 .oth .wordlist{margin-top:8px}
 .oth .gridscroll{margin-top:8px}
 .order-seg[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
-.ready-btn{display:block;width:100%;margin-top:12px;padding:12px;border-radius:10px;border:2px dashed var(--line-strong);background:none;font-weight:700;font-size:14.5px;color:var(--ink-2)}
-.ready-btn.on{border-style:solid;border-color:var(--good);color:var(--good)}
+.ready-btn{display:block;width:100%;margin-top:14px;padding:14px;border-radius:12px;border:none;background:var(--good);color:#fff;font-weight:800;font-size:16px}
+.ready-btn.on{background:none;border:2px solid var(--good);color:var(--good);font-size:14.5px}
+.ready-note{font-size:12.5px;color:var(--muted);text-align:center;margin-top:6px}
 .ready-btn[hidden]{display:none}
 .lb-note{font-size:12.5px;color:var(--muted);margin:0 0 9px}
 .lb-warn{font-size:12.5px;color:var(--warn);background:var(--warn-soft);border-radius:9px;padding:8px 11px;margin:0 0 9px}
@@ -382,7 +411,7 @@ table.scale td:last-child{text-align:right;font-weight:700}
       <button class="primary" id="score-btn">Finalize round</button>
       <button class="ghost" id="clear-btn">Clear my board</button>
       <div class="why-off" id="why-off"></div>
-      <div class="ver" style="font-size:11px;opacity:.45;margin-top:6px">v19</div>
+      <div class="ver" style="font-size:11px;opacity:.45;margin-top:6px">v20</div>
     </div>
   </section>
 
@@ -426,11 +455,10 @@ table.scale td:last-child{text-align:right;font-weight:700}
   <div class="dlg-bd">
     <div id="tl-crop"></div>
     <p class="hint" id="tl-note" style="margin-top:0"></p>
-    <div class="field"><label for="tl-letter">Letter</label><input id="tl-letter" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="2"></div>
+    <div class="keys" id="tl-keys"></div>
   </div>
   <div class="dlg-ft">
-    <button class="primary" id="tl-save">Save</button>
-    <button class="danger" id="tl-del">Remove tile</button>
+    <button class="danger" id="tl-del">Remove this tile</button>
     <button class="ghost" id="tl-cancel">Cancel</button>
   </div>
 </dialog>
@@ -184120,14 +184148,15 @@ function renderPanes(){
   tools.appendChild(bRe); tools.appendChild(bRd); tools.appendChild(bUp); pane.appendChild(tools);
 
   var st=el('div','status'); st.id='st'+i; st.hidden=true; pane.appendChild(st);
+  pane.appendChild(el('div','gridbox board-edit')).id='grid'+i;
   pane.appendChild(el('div','checks')).id='ck'+i;
-  pane.appendChild(el('div','gridbox')).id='grid'+i;
-  pane.appendChild(el('div','eyebrow wl-h','Words found — tap one to correct it')).id='wl'+i;
+  pane.appendChild(el('div','eyebrow wl-h','Words')).id='wl'+i;
   pane.appendChild(el('div','wlist')).id='words'+i;
   pane.appendChild(el('div','result')).id='res'+i;
   var rd=el('button','ready-btn'); rd.type='button'; rd.id='ready-btn';
   rd.addEventListener('click',function(){ var x=state.draft.p[me]; x.ready=!x.ready; save(true); updateRound(); });
   pane.appendChild(rd);
+  pane.appendChild(el('div','ready-note')).id='ready-note';
   host.appendChild(pane);
   paintShot(i); if(stMsg[i]) setStatus(i,stMsg[i][0],stMsg[i][1]); refreshPane(i);
 }
@@ -184186,30 +184215,37 @@ function whereStrip(i,it,label){
   if(!any) return null;
   box.appendChild(st); return box;
 }
+/* the board as read, always tappable: a tile opens a letter picker, a ＋ next to
+   the board adds a tile the camera missed */
 function renderGrid(i){
   var s=state.draft.p[i], box=$('grid'+i); box.textContent='';
   var has=s.rows.length>0;
-  box.hidden=!has&&!fixing[i]&&!(shots[i]&&!busy[i]);
+  box.hidden=!has&&!(shots[i]&&!busy[i]);
   if(box.hidden) return;
-  var hd=el('div','gb-hd');
-  hd.appendChild(el('span','eyebrow',fixing[i]?'Tap a tile to change or remove it · tap a blank to add one':'Board as read'));
-  var tg=el('button','mini',fixing[i]?'Done':(has?'Fix a tile':'Enter the board by hand'));
-  tg.addEventListener('click',function(){ fixing[i]=!fixing[i]; refreshPane(i); });
-  hd.appendChild(tg); box.appendChild(hd);
-  if(!has&&!fixing[i]) return;
-  var badCells={}; sideItems(i).forEach(function(it){ if(!it.ok&&it.cells) it.cells.forEach(function(rc){ badCells[rc[0]+','+rc[1]]=1; }); });
-  var pad=fixing[i]?1:0, h=s.rows.length+2*pad, w=W(s.rows)+2*pad, g=el('div','grid'+(fixing[i]?' editing':''));
-  if(!has){ h=3; w=3; }
-  g.style.gridTemplateColumns='repeat('+w+',var(--cs))';
+  var hd=el('div','be-hd');
+  hd.appendChild(el('b','',has?'Does this match your board?':'No tiles found in the photo'));
+  hd.appendChild(el('p','hint',has?'Tap a letter to fix it · tap ＋ to add a tile the camera missed':'Retake the photo from straight above, or tap ＋ to type your board in.'));
+  box.appendChild(hd);
+  var bad={}, items=sideItems(i); items.forEach(function(it){ if(!it.ok&&it.cells) it.cells.forEach(function(rc){ bad[rc[0]+','+rc[1]]=1; }); });
+  var h=has?s.rows.length+2:3, w=has?W(s.rows)+2:3;
+  var room=Math.max(240,($('panes').clientWidth||340)-40), cs=Math.max(26,Math.min(48,Math.floor((room-(w-1)*4)/w)));
+  var g=el('div','be-grid'); g.style.setProperty('--cs',cs+'px'); g.style.gridTemplateColumns='repeat('+w+','+cs+'px)';
   for(var r=0;r<h;r++) for(var c=0;c<w;c++){
-    var ch=cell(s.rows,r-pad,c-pad), key=(r-pad)+','+(c-pad);
-    var b=el(fixing[i]?'button':'span',ch?'gt':'gt empty',ch||'');
-    if(ch&&s.unsure[key]) b.classList.add('unsure');
-    if(ch&&badCells[key]) b.classList.add('badw');
-    if(fixing[i]){ b.type='button'; (function(r,c){ b.addEventListener('click',function(){ openTile(i,r,c); }); })(r,c); }
+    var ch=has?cell(s.rows,r-1,c-1):'', key=(r-1)+','+(c-1), b;
+    var nextTo=!has?(r===1&&c===1):[[0,1],[0,-1],[1,0],[-1,0]].some(function(d){ return cell(s.rows,r-1+d[0],c-1+d[1]); });
+    if(ch){ b=el('button','gt'+(bad[key]?' badw':s.unsure[key]?' unsure':''),ch); }
+    else if(nextTo){ b=el('button','gt add','+'); b.setAttribute('aria-label','Add a tile here'); }
+    else { g.appendChild(el('span','gt blank')); continue; }
+    b.type='button'; (function(r,c){ b.addEventListener('click',function(){ openTile(i,r,c); }); })(r,c);
     g.appendChild(b);
   }
-  var wrap=el('div','gridscroll'); wrap.appendChild(g); box.appendChild(wrap);
+  var wrap=el('div','be-wrap'); wrap.appendChild(g); box.appendChild(wrap);
+  if(has&&(Object.keys(bad).length||Object.keys(s.unsure).length)){
+    var key2=el('div','be-key');
+    if(Object.keys(bad).length){ var k1=el('span'); var sw=el('i'); sw.style.background='var(--bad-soft)'; sw.style.border='2px solid var(--bad)'; k1.appendChild(sw); k1.appendChild(document.createTextNode('in a word that isn’t real')); key2.appendChild(k1); }
+    if(Object.keys(s.unsure).length){ var k2=el('span'); var sw2=el('i'); sw2.style.background='var(--warn-soft)'; sw2.style.border='2px solid var(--warn)'; k2.appendChild(sw2); k2.appendChild(document.createTextNode('hard to read — check it')); key2.appendChild(k2); }
+    box.appendChild(key2);
+  }
 }
 
 function refreshPane(i){
@@ -184262,19 +184298,21 @@ function refreshPane(i){
     }
   }
 
-  // word list: every word and its points
+  // words: what's wrong first, then every word as a chip
   var wl=$('words'+i); wl.textContent='';
-  items.forEach(function(it){
-    var b=el('button','wrow'+(it.ok?'':' bad')); b.type='button';
-    b.appendChild(tilesEl(it.w,-1));
-    b.appendChild(el('span','dir',it.dir==='h'?'across':it.dir==='v'?'down':'added'));
-    if(it.ovr!==null) b.appendChild(el('span','flag',it.ok?'allowed':'ruled out'));
-    b.appendChild(el('span','wp num',it.ok?String(it.pts):'✗ 0'));
-    b.addEventListener('click',function(){ openWord(i,it); });
-    wl.appendChild(b);
-    if(!it.ok){ var ws=whereStrip(i,it); if(ws) wl.appendChild(ws); }
+  var probs=el('div','probs');
+  items.filter(function(it){ return !it.ok; }).forEach(function(it){
+    var pr=el('div','prob'); pr.appendChild(el('b','',it.w)); pr.appendChild(document.createTextNode(it.ovr===false?' — you ruled it out.':' isn’t a word. Fix its red letters above, or'));
+    if(it.ovr!==false){ var ok=el('button','','count it anyway'); ok.addEventListener('click',function(){ s.ovr[it.w]=true; save(); refreshPane(i); }); pr.appendChild(ok); }
+    probs.appendChild(pr);
   });
-  if(items.length||(shots[i]&&!busy[i])){ var add=el('button','chip add','+ Add a word it missed'); add.type='button'; add.addEventListener('click',function(){ openWord(i,null); }); wl.appendChild(add); }
+  if(probs.childNodes.length) wl.appendChild(probs);
+  var chips=el('div','wchips'); chips.style.marginTop='10px';
+  items.forEach(function(it){
+    var b=el('button','wchip'+(it.ok?'':' bad'),it.w); b.type='button'; b.appendChild(el('small','',it.ok?'+'+it.pts:'0'));
+    b.addEventListener('click',function(){ openWord(i,it); }); chips.appendChild(b);
+  });
+  if(items.length) wl.appendChild(chips);
   $('wl'+i).hidden=!items.length;
   updateRound();
 }
@@ -184344,7 +184382,8 @@ function updateRound(){
       }
     }
     var rb=$('ready-btn');
-    if(rb){ var x=d.p[me]; rb.hidden=!l.length||busy[me]||!!d.sit[me]; rb.textContent=x.ready?'✓ My board is ready (tap to undo)':'My board is checked — mark it ready'; rb.classList.toggle('on',!!x.ready); }
+    if(rb){ var x=d.p[me], nb=badWords(l).length; rb.hidden=!l.length||busy[me]||!!d.sit[me]; rb.textContent=x.ready?'✓ You’re ready — tap to change something':'✓ My board is right'; rb.classList.toggle('on',!!x.ready);
+      var rn=$('ready-note'); if(rn) rn.textContent=rb.hidden?'':(x.ready?'Waiting for the others.':nb?(nb===1?'1 word isn’t real and will score 0.':nb+' words aren’t real and will score 0.'):'All words check out.'); }
   }
   var pv=$('preview'); pv.textContent='';
   if(act.some(function(i){ return itemsOf(d.p[i]).length; })) pv.appendChild(el('div','pv-b','Finishing bonus: '+bn.why));
@@ -184360,7 +184399,11 @@ function updateRound(){
   else if(!bn.ready) why=bn.why;
   else why='Everyone: check the scores above, then anyone can finalize.';
   var blocked=(me>=0&&busy[me])||!act.length||waiting.length||unready.length||!bn.ready;
-  $('score-btn').disabled=!!blocked; $('why-off').textContent=why;
+  $('score-btn').disabled=!!blocked;
+  var wo=$('why-off'); wo.textContent=''; wo.className='why-off waitlist'; wo.style.color=''; wo.style.fontWeight='';
+  act.forEach(function(i){ var x=d.p[i], has=itemsOf(x).length;
+    wo.appendChild(el('div',x.ready&&has?'ok':'',(x.ready&&has?'✓ ':has?'✏️ ':'📷 ')+state.names[i]+(i===me?' (you)':'')+(x.ready&&has?' — ready':has?' — checking their board':' — no photo yet'))); });
+  wo.appendChild(el('div','next',blocked?(waiting.length||unready.length?'Finalize unlocks when everyone is ready.':why):'Everyone’s ready — anyone can finalize.'));
   $('undo-btn').disabled=!state.rounds.length;
 }
 function listNames(a){ return a.length<3?a.join(' and '):a.slice(0,-1).join(', ')+' and '+a[a.length-1]; }
@@ -184654,16 +184697,17 @@ var tSide=0, tR=0, tC=0;
 function openTile(i,r,c){
   tSide=i; tR=r; tC=c;
   var s=state.draft.p[i], ch=cell(s.rows,r-1,c-1), u=s.unsure[(r-1)+','+(c-1)];
-  $('tl-title').textContent=ch?'Fix tile '+ch:'Add a tile here';
+  $('tl-title').textContent=ch?'What does this tile say?':'Add a missing tile';
   var tc=$('tl-crop'); tc.textContent=''; var cv=ch&&tileCrop(i,(r-1)+','+(c-1),60); if(cv){ cv.className='tilecrop'; tc.appendChild(cv); }
-  $('tl-note').textContent=u?('Flagged: '+(u.note||'hard to read')+'. Check the photo.'):(ch?'Type the correct letter, or remove the tile if it isn’t really there.':'Type the letter that sits in this square.');
-  $('tl-letter').value=ch; $('tl-del').hidden=!ch;
-  $('dlg-tile').showModal(); setTimeout(function(){ var x=$('tl-letter'); x.focus(); x.select(); },50);
+  $('tl-note').textContent=ch?('Read as '+ch+(u?' — not sure ('+(u.note||'hard to read')+')':'')+'. Tap the right letter.'):'Tap the letter of the tile that sits here.';
+  var keys=$('tl-keys'); keys.textContent='';
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(function(L){
+    var b=el('button',L===ch?'cur':'',L); b.type='button'; b.addEventListener('click',function(){ tileDone(L); }); keys.appendChild(b);
+  });
+  $('tl-del').hidden=!ch;
+  $('dlg-tile').showModal();
 }
 function tileDone(ch){ setTile(state.draft.p[tSide],tR,tC,ch); save(); $('dlg-tile').close(); refreshPane(tSide); }
-$('tl-letter').addEventListener('input',function(){ var v=clean(this.value); this.value=v.slice(-1); });
-$('tl-letter').addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); $('tl-save').click(); } });
-$('tl-save').addEventListener('click',function(){ var v=clean($('tl-letter').value); if(v) tileDone(v); else $('dlg-tile').close(); });
 $('tl-del').addEventListener('click',function(){ tileDone(''); });
 $('tl-cancel').addEventListener('click',function(){ $('dlg-tile').close(); });
 
