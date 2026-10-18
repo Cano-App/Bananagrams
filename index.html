@@ -164,6 +164,24 @@ textarea.typed{width:100%;min-height:90px;margin-top:9px;border:1px solid var(--
 .w-mini.bad{background:var(--bad-soft);border-color:var(--bad);color:var(--bad);text-decoration:line-through}
 .w-mini i{font-style:normal;color:var(--muted);font-weight:400}
 .bonus-tag{font-size:11.5px;font-weight:700;color:var(--good)}
+.lb{margin-top:26px}
+.lb-note{font-size:12.5px;color:var(--muted);margin:0 0 9px}
+.lb-warn{font-size:12.5px;color:var(--warn);background:var(--warn-soft);border-radius:9px;padding:8px 11px;margin:0 0 9px}
+.lb-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:13.5px}
+.lb-table th{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:700;text-align:right;padding:8px 10px;border-bottom:1px solid var(--line)}
+.lb-table td{text-align:right;padding:8px 10px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+.lb-table tr:last-child td{border-bottom:none}
+.lb-table th:nth-child(-n+2),.lb-table td:nth-child(-n+2){text-align:left}
+.lb-table td:first-child{color:var(--muted);width:2.2em}
+.lb-scroll{overflow-x:auto;border-radius:12px}
+.lb-games{display:grid;gap:7px;margin-top:12px}
+.lb-game{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:9px 12px;color:var(--ink);font:inherit;cursor:pointer}
+.lb-game:hover{border-color:var(--line-strong)}
+.lb-game.mine{border-color:var(--p1)}
+.lb-game .gm{flex:1;min-width:0}
+.lb-game .gm b{font-weight:700}
+.lb-game .gs{font-size:12px;color:var(--muted);margin-top:2px}
+.lb-game .tag{font-size:11px;font-weight:700;color:var(--p1);white-space:nowrap}
 .empty{border:1px dashed var(--line-strong);border-radius:12px;padding:18px 14px;text-align:center;color:var(--muted);font-size:13px}
 
 /* dialogs */
@@ -270,6 +288,7 @@ table.scale td:last-child{text-align:right;font-weight:700}
   <div class="bar-in">
     <div class="logo"><span class="mark">B</span><h1>Bananagrams Duel</h1></div>
     <span class="bar-sp"></span>
+    <button class="ghost" id="btn-lb">Leaderboard</button>
     <button class="ghost" id="btn-rules">Rules</button>
     <button class="ghost" id="btn-setup">Setup</button>
   </div>
@@ -311,13 +330,19 @@ table.scale td:last-child{text-align:right;font-weight:700}
       <button class="primary" id="score-btn">Finalize round</button>
       <button class="ghost" id="clear-btn">Clear round</button>
       <div class="why-off" id="why-off"></div>
-      <div class="ver" style="font-size:11px;opacity:.45;margin-top:6px">v13</div>
+      <div class="ver" style="font-size:11px;opacity:.45;margin-top:6px">v14</div>
     </div>
   </section>
 
   <section class="hist">
     <div class="hist-hd"><h2>Rounds this game</h2><button class="ghost" id="undo-btn">Edit / undo last round</button></div>
     <div id="history"></div>
+  </section>
+
+  <section class="lb" id="lb">
+    <div class="hist-hd"><h2>Leaderboard · everyone</h2></div>
+    <p class="lb-note" id="lb-note">Loading the shared leaderboard…</p>
+    <div id="lb-body"></div>
   </section>
 </div>
 
@@ -183637,9 +183662,11 @@ function inDict(w){ return DICT?DICT.has(w.toLowerCase()):true; }
 var KEY='bgduel.v6';
 function blankSide(){ return {rows:[],unsure:{},drop:{},extra:[],ovr:{},loose:[],pos:{},geo:null}; }
 function blankDraft(){ return {out:undefined,p:[blankSide(),blankSide()]}; }
-var state={names:['Nicole','Joe'],target:250,rounds:[],draft:blankDraft(),last:null,saved:0};
+function newId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
+var state={id:newId(),names:['Player 1','Player 2'],target:250,rounds:[],draft:blankDraft(),last:null,saved:0};
 var shots=[null,null], busy=[false,false], fixing=[false,false];
 var sampler=null, imagesOK=false, gameDoc=null, assets=null, dbBusy=false, dbAgain=false;
+var DB=null, unsubGame=null, lbGames=null, lbReadOnly=false, lbError='';
 
 function save(){
   state.saved=Date.now();
@@ -183650,13 +183677,19 @@ function pushDb(){
   if(!gameDoc) return;
   if(dbBusy){ dbAgain=true; return; }
   dbBusy=true;
-  gameDoc.set({state:JSON.stringify(state)}).catch(function(){}).then(function(){
+  var t=totals(), w=winnerOf(t);
+  gameDoc.set({state:JSON.stringify(state),names:state.names.slice(),totals:t,rounds:state.rounds.length,
+    target:state.target,winner:w==null?-1:w,saved:state.saved,
+    best:[0,1].map(function(i){ return state.rounds.reduce(function(m,r){ return Math.max(m,r.scores[i]); },0); })})
+  .then(function(){ if(lbReadOnly){ lbReadOnly=false; renderLeaderboard(); } },function(e){
+    if(e&&e.code==='invalid_argument'){ lbReadOnly=true; renderLeaderboard(); }
+  }).then(function(){
     dbBusy=false; if(dbAgain){ dbAgain=false; pushDb(); }
   });
 }
 function adopt(o){
   if(!o||!Array.isArray(o.rounds)||!Array.isArray(o.names)) return false;
-  state.names=o.names; state.target=o.target||250; state.rounds=o.rounds; state.last=o.last||null;
+  state.id=o.id||state.id||newId(); state.names=o.names; state.target=o.target||250; state.rounds=o.rounds; state.last=o.last||null;
   state.draft=(o.draft&&o.draft.p&&o.draft.p[0]&&o.draft.p[0].extra)?o.draft:blankDraft(); state.saved=o.saved||0;
   return true;
 }
@@ -184452,13 +184485,14 @@ function lightbox(src){
   var lb=el('div'); lb.id='lightbox'; var im=document.createElement('img'); im.src=src; im.alt='Board photo';
   lb.appendChild(im); lb.addEventListener('click',function(){ lb.remove(); }); document.body.appendChild(lb);
 }
-function renderAll(){ renderBoard(); renderPanes(); renderHistory(); updateRound(); renderChat(); }
+function renderAll(){ renderBoard(); renderPanes(); renderHistory(); updateRound(); renderChat(); renderLeaderboard(); }
 function setOut(v){ state.draft.out=v; save(); updateRound(); }
 function dropShots(){ chatLog=[]; [0,1].forEach(function(i){ if(shots[i]&&shots[i].blob) URL.revokeObjectURL(shots[i].url); }); shots=[null,null]; fixing=[false,false]; }
 function newGame(){
   if($('dlg-setup').open) $('dlg-setup').close();
-  ask('Start a new game?','Running scores go back to 0.','New game',function(){
+  ask('Start a new game?','Running scores go back to 0. The finished game stays on the leaderboard.','New game',function(){
     state.rounds=[]; state.draft=blankDraft(); state.last=null; dropShots();
+    state.id=newId(); watchGame();
     save(); renderAll();
   });
 }
@@ -184483,16 +184517,96 @@ $('undo-btn').addEventListener('click',function(){
 });
 $('btn-setup').addEventListener('click',function(){ $('n0').value=state.names[0]; $('n1').value=state.names[1]; $('tg').value=state.target; $('dlg-setup').showModal(); });
 $('setup-done').addEventListener('click',function(){
-  state.names[0]=($('n0').value||'').trim()||'Nicole'; state.names[1]=($('n1').value||'').trim()||'Joe';
+  state.names[0]=($('n0').value||'').trim()||'Player 1'; state.names[1]=($('n1').value||'').trim()||'Player 2';
   var t=parseInt($('tg').value,10); state.target=isNaN(t)?250:Math.max(50,Math.min(2000,t));
   save(); renderAll(); $('dlg-setup').close();
 });
 $('btn-newgame').addEventListener('click',newGame);
 $('btn-rules').addEventListener('click',function(){ $('dlg-rules').showModal(); });
+$('btn-lb').addEventListener('click',function(){ $('lb').scrollIntoView({behavior:'smooth'}); });
 $('rules-done').addEventListener('click',function(){ $('dlg-rules').close(); });
 
 /* test hook (no effect in normal use) */
 window.__bg={applyActions:applyActions,boardText:boardText,state:state,gridWords:gridWords,pullLoose:pullLoose,refresh:function(){ save(); renderAll(); }};
+
+/* ---------- shared leaderboard ----------
+   Every game is its own document under games/. This phone keeps the id of the
+   game it is scoring; tapping another game on the leaderboard follows that game
+   here, so both players can score and watch the same running totals. */
+function watchGame(){
+  if(!DB) return;
+  if(unsubGame){ unsubGame(); unsubGame=null; }
+  gameDoc=DB.doc('games/'+state.id);
+  unsubGame=gameDoc.onSnapshot(function(snap){
+    var d=snap.exists&&snap.data(), o=null;
+    try{ o=d&&d.state?JSON.parse(d.state):null; }catch(e){}
+    if(o&&o.id===state.id&&(o.saved||0)>(state.saved||0)&&adopt(o)){
+      try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){}
+      renderAll();
+    }else if(!d&&state.saved) pushDb();
+  },function(){});
+}
+function followGame(g){
+  if(g.id===state.id) return;
+  var o=null; try{ o=JSON.parse(g.state); }catch(e){}
+  if(!o) return;
+  o.id=g.id;
+  ask('Follow this game?',(g.names||[]).join(' vs ')+' — this phone will show and score that game. Your current game stays on the leaderboard.','Follow',function(){
+    dropShots(); state.saved=0; adopt(o); watchGame();
+    try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){}
+    renderAll(); window.scrollTo({top:0,behavior:'smooth'});
+  });
+}
+function nameKey(n){ return String(n||'').trim().toLowerCase(); }
+function ago(ts){
+  var m=Math.round((Date.now()-ts)/60000);
+  if(m<1) return 'just now'; if(m<60) return m+' min ago';
+  var h=Math.round(m/60); if(h<24) return h+' h ago';
+  return Math.round(h/24)+' d ago';
+}
+function renderLeaderboard(){
+  var note=$('lb-note'), body=$('lb-body'); body.textContent='';
+  if(!DB){ note.textContent=lbError||'The shared leaderboard works when the game is opened from its Claude link while signed in.'; return; }
+  if(!lbGames){ note.textContent='Loading the shared leaderboard…'; return; }
+  note.textContent='Every game played from this link, live. Wins = games won / played · Avg and Best = points per round. Same name = same player.';
+  if(lbReadOnly) body.appendChild(el('p','lb-warn','You can see the leaderboard, but your games aren’t being saved to it. Ask the person who shared this link to give you edit access.'));
+  var games=lbGames.filter(function(g){ return g.rounds>0&&Array.isArray(g.names)&&Array.isArray(g.totals); });
+  if(!games.length){ body.appendChild(el('div','empty','No games yet. Finalize a round and it shows up here for everyone.')); return; }
+  var P={};
+  games.forEach(function(g){ [0,1].forEach(function(i){
+    var k=nameKey(g.names[i]); if(!k) return;
+    var p=P[k]||(P[k]={name:String(g.names[i]).trim(),games:0,wins:0,points:0,rounds:0,best:0});
+    p.games++; p.points+=g.totals[i]||0; p.rounds+=g.rounds; if(g.winner===i) p.wins++;
+    p.best=Math.max(p.best,(g.best&&g.best[i])||0);
+  }); });
+  var list=Object.keys(P).map(function(k){ return P[k]; }).sort(function(a,b){
+    return b.wins-a.wins||(b.points/b.rounds)-(a.points/a.rounds)||b.points-a.points; });
+  var tb=el('table','lb-table'), hd=el('tr');
+  ['#','Player','Wins','Avg','Best','Points'].forEach(function(h){ hd.appendChild(el('th','',h)); });
+  var th=el('thead'); th.appendChild(hd); tb.appendChild(th);
+  var bd=el('tbody');
+  list.forEach(function(p,ix){ var tr=el('tr');
+    [String(ix+1),p.name,p.wins+'/'+p.games,(p.points/p.rounds).toFixed(1),String(p.best),p.points.toLocaleString()]
+      .forEach(function(v){ tr.appendChild(el('td','',v)); });
+    bd.appendChild(tr); });
+  tb.appendChild(bd);
+  var sc=el('div','lb-scroll'); sc.appendChild(tb); body.appendChild(sc);
+  body.appendChild(el('div','eyebrow','Games — tap one to follow it on this phone')).style.marginTop='16px';
+  var gl=el('div','lb-games');
+  games.forEach(function(g){
+    var b=el('button','lb-game'+(g.id===state.id?' mine':'')); b.type='button';
+    var m=el('div','gm'), line=el('div');
+    [0,1].forEach(function(i){ if(i) line.appendChild(document.createTextNode('  ·  '));
+      line.appendChild(el(g.winner===i?'b':'span','',String(g.names[i])+' '+g.totals[i])); });
+    m.appendChild(line);
+    m.appendChild(el('div','gs',g.rounds+' round'+(g.rounds===1?'':'s')+' · to '+g.target+' · '+(g.winner>=0?'finished':'in progress')+' · '+ago(g.saved||0)));
+    b.appendChild(m);
+    if(g.id===state.id) b.appendChild(el('span','tag','This phone'));
+    b.addEventListener('click',function(){ followGame(g); });
+    gl.appendChild(b);
+  });
+  body.appendChild(gl);
+}
 
 /* ---------- boot ---------- */
 loadLocal(); renderAll();
@@ -184507,14 +184621,12 @@ if(window.claude&&window.claude.use){
     if(sampler&&sampler.limits) sampler.limits().then(function(l){ imagesOK=!!(l&&l.images); }).catch(function(){}); }).catch(function(){});
   window.claude.use('assets').then(function(a){ assets=a||null; }).catch(function(){});
   window.claude.use('db').then(function(db){
-    if(!db) return;
-    gameDoc=db.doc('games/current');
-    return gameDoc.get().then(function(snap){
-      var d=snap.exists&&snap.data(), o=null;
-      try{ o=d&&d.state?JSON.parse(d.state):null; }catch(e){}
-      if(o&&(o.saved||0)>(state.saved||0)&&adopt(o)){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} renderAll(); }
-      else if(state.saved) pushDb();
-    });
+    if(!db){ lbError='Sign in to Claude to see and join the shared leaderboard.'; renderLeaderboard(); return; }
+    DB=db; watchGame();
+    db.collection('games').orderBy('saved','desc').limit(500).onSnapshot(function(q){
+      lbGames=q.docs.map(function(d){ var o=d.data()||{}; o.id=d.id; return o; }); renderLeaderboard();
+    },function(){ lbError='The leaderboard couldn’t load. Reopen the page to try again.'; lbGames=null; $('lb-note').textContent=lbError; });
+    renderLeaderboard();
   }).catch(function(){});
 }
 })();
