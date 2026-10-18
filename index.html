@@ -184491,7 +184491,9 @@ function sideFromRead(r,px){
   r.glyphs.forEach(function(g){
     var k=g.r+','+g.c; if(fixed[k]||!g.cands||g.cands.length<2) return;
     var a=g.cands[1]; if(a.d>g.cands[0].d*1.25+0.3) return;
-    if(tryCh(g.r,g.c,a.ch)||!allOk(g.r,g.c)) side.unsure[k]={note:'Hard to read',options:[a.ch]};
+    // the letter as read already makes every word real: only a near tie is worth asking about
+    if(allOk(g.r,g.c)){ if(a.d<=g.cands[0].d*1.08+0.1&&tryCh(g.r,g.c,a.ch)) side.unsure[k]={note:'Hard to read',options:[a.ch]}; return; }
+    side.unsure[k]={note:'Hard to read',options:[a.ch]};
   });
   return side;
 }
