@@ -184610,7 +184610,14 @@ function renderLeaderboard(){
 
 /* Outside Claude (e.g. GitHub Pages) the leaderboard is kept in Firebase.
    Paste the web app config from the Firebase console here; null turns it off. */
-var FIREBASE=null;
+var FIREBASE={
+  apiKey:"AIzaSyAZHx61X7Eh9rVL62N9juocoQRZbFPS4DU",
+  authDomain:"bananagrams-4b5f0.firebaseapp.com",
+  projectId:"bananagrams-4b5f0",
+  storageBucket:"bananagrams-4b5f0.firebasestorage.app",
+  messagingSenderId:"665533055457",
+  appId:"1:665533055457:web:d093f201a5f95c7efad2a0"
+};
 function startDb(db){
   DB=db; watchGame();
   db.collection('games').orderBy('saved','desc').limit(500).onSnapshot(function(q){
