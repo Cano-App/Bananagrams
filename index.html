@@ -330,7 +330,7 @@ table.scale td:last-child{text-align:right;font-weight:700}
       <button class="primary" id="score-btn">Finalize round</button>
       <button class="ghost" id="clear-btn">Clear round</button>
       <div class="why-off" id="why-off"></div>
-      <div class="ver" style="font-size:11px;opacity:.45;margin-top:6px">v14</div>
+      <div class="ver" style="font-size:11px;opacity:.45;margin-top:6px">v15</div>
     </div>
   </section>
 
@@ -184566,10 +184566,10 @@ function ago(ts){
 }
 function renderLeaderboard(){
   var note=$('lb-note'), body=$('lb-body'); body.textContent='';
-  if(!DB){ note.textContent=lbError||'The shared leaderboard works when the game is opened from its Claude link while signed in.'; return; }
+  if(!DB){ note.textContent=lbError||'The shared leaderboard isn’t switched on for this copy yet.'; return; }
   if(!lbGames){ note.textContent='Loading the shared leaderboard…'; return; }
   note.textContent='Every game played from this link, live. Wins = games won / played · Avg and Best = points per round. Same name = same player.';
-  if(lbReadOnly) body.appendChild(el('p','lb-warn','You can see the leaderboard, but your games aren’t being saved to it. Ask the person who shared this link to give you edit access.'));
+  if(lbReadOnly) body.appendChild(el('p','lb-warn','You can see the leaderboard, but your games aren’t being saved to it. Ask the person who runs this game to check its settings.'));
   var games=lbGames.filter(function(g){ return g.rounds>0&&Array.isArray(g.names)&&Array.isArray(g.totals); });
   if(!games.length){ body.appendChild(el('div','empty','No games yet. Finalize a round and it shows up here for everyone.')); return; }
   var P={};
@@ -184608,6 +184608,36 @@ function renderLeaderboard(){
   body.appendChild(gl);
 }
 
+/* Outside Claude (e.g. GitHub Pages) the leaderboard is kept in Firebase.
+   Paste the web app config from the Firebase console here; null turns it off. */
+var FIREBASE=null;
+function startDb(db){
+  DB=db; watchGame();
+  db.collection('games').orderBy('saved','desc').limit(500).onSnapshot(function(q){
+    lbGames=q.docs.map(function(d){ var o=d.data()||{}; o.id=d.id; return o; }); renderLeaderboard();
+  },function(){ lbError='The leaderboard couldn’t load. Reopen the page to try again.'; DB=null; lbGames=null; renderLeaderboard(); });
+  renderLeaderboard();
+}
+/* Firebase wrapped in the same small shape as Claude's db, so the rest of the
+   app doesn't care which one it is talking to. */
+function startFirebase(){
+  var V='https://www.gstatic.com/firebasejs/10.12.2/';
+  lbError='Loading the shared leaderboard…'; renderLeaderboard();
+  Promise.all([import(V+'firebase-app.js'),import(V+'firebase-firestore.js')]).then(function(m){
+    var F=m[1], fs=F.getFirestore(m[0].initializeApp(FIREBASE));
+    function wrapDoc(sn){ return {id:sn.id,exists:sn.exists(),data:function(){ return sn.data(); }}; }
+    function errOf(e){ return {code:e&&e.code==='permission-denied'?'invalid_argument':'unavailable'}; }
+    startDb({
+      doc:function(path){ var ref=F.doc(fs,path); return {
+        set:function(d){ return F.setDoc(ref,d).catch(function(e){ throw errOf(e); }); },
+        onSnapshot:function(next,err){ return F.onSnapshot(ref,function(sn){ next(wrapDoc(sn)); },function(e){ if(err) err(errOf(e)); }); } }; },
+      collection:function(c){ return {orderBy:function(f,dir){ return {limit:function(n){ return {
+        onSnapshot:function(next,err){ return F.onSnapshot(F.query(F.collection(fs,c),F.orderBy(f,dir),F.limit(n)),
+          function(q){ next({docs:q.docs.map(wrapDoc)}); },function(e){ if(err) err(errOf(e)); }); } }; } }; } }; }
+    });
+  }).catch(function(){ lbError='The leaderboard couldn’t load. Check your connection and reopen the page.'; renderLeaderboard(); });
+}
+
 /* ---------- boot ---------- */
 loadLocal(); renderAll();
 setTimeout(function(){
@@ -184621,14 +184651,10 @@ if(window.claude&&window.claude.use){
     if(sampler&&sampler.limits) sampler.limits().then(function(l){ imagesOK=!!(l&&l.images); }).catch(function(){}); }).catch(function(){});
   window.claude.use('assets').then(function(a){ assets=a||null; }).catch(function(){});
   window.claude.use('db').then(function(db){
-    if(!db){ lbError='Sign in to Claude to see and join the shared leaderboard.'; renderLeaderboard(); return; }
-    DB=db; watchGame();
-    db.collection('games').orderBy('saved','desc').limit(500).onSnapshot(function(q){
-      lbGames=q.docs.map(function(d){ var o=d.data()||{}; o.id=d.id; return o; }); renderLeaderboard();
-    },function(){ lbError='The leaderboard couldn’t load. Reopen the page to try again.'; lbGames=null; $('lb-note').textContent=lbError; });
-    renderLeaderboard();
-  }).catch(function(){});
-}
+    if(db) startDb(db); else if(FIREBASE) startFirebase();
+    else{ lbError='Sign in to Claude to see and join the shared leaderboard.'; renderLeaderboard(); }
+  }).catch(function(){ if(FIREBASE) startFirebase(); });
+}else if(FIREBASE) startFirebase();
 })();
 </script>
 
