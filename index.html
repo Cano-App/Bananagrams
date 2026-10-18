@@ -382,7 +382,7 @@ table.scale td:last-child{text-align:right;font-weight:700}
       <button class="primary" id="score-btn">Finalize round</button>
       <button class="ghost" id="clear-btn">Clear my board</button>
       <div class="why-off" id="why-off"></div>
-      <div class="ver" style="font-size:11px;opacity:.45;margin-top:6px">v18</div>
+      <div class="ver" style="font-size:11px;opacity:.45;margin-top:6px">v19</div>
     </div>
   </section>
 
@@ -183537,7 +183537,17 @@ function findGlyphs(img){
     c.bw=bw; c.bh=bh; c.bh0=bh0; c.big=bh; c.ring=ringAvg; cands.push(c);
   });
   if(!cands.length) return {glyphs:[],lab:lb.lab,L:L,w:w,h:h};
-  var mh=median(cands.map(function(c){return c.big;}));
+  // letter size: the size a group of shapes agrees on. Specks, smudges and table
+  // marks come in every size and can outnumber the letters, so tiny blobs don't
+  // count and bigger groups win over a crowd of specks
+  var minSz=Math.max(8,Math.min(w,h)*0.012), sized=cands.filter(function(c){ return c.big>=minSz; });
+  if(!sized.length) sized=cands;
+  var bestG=null;
+  sized.forEach(function(c){
+    var grp=sized.filter(function(d){ return d.big>c.big/1.35&&d.big<c.big*1.35; }), sc=grp.length*Math.sqrt(c.big);
+    if(!bestG||sc>bestG.sc) bestG={sc:sc,grp:grp};
+  });
+  var mh=median(bestG.grp.map(function(c){return c.big;}));
   // wide letters (M, W) on a crooked tile come out well wider than they are tall
   var glyphs=cands.filter(function(c){ return c.big>mh*0.45&&(c.big<mh*1.45||(c.bh0<mh*1.3&&c.big<mh*1.9)); });
   // pull broken pieces of one letter (e.g. a K whose arms split from the stem) together
@@ -184470,6 +184480,12 @@ function sideFromRead(r,px){
       if(cost(h,to)>4) return;
       if(tryChanges([{k:k2,ch:to}])>=0&&(thr[k2]||[]).some(function(wi){ return !valid(wi); })) apply([{k:k2,ch:to}]);
     });
+  });
+  // a correction the words prove (as read, a word wasn't real; now every word is)
+  // needs no question
+  Object.keys(fixed).forEach(function(k){
+    var ws=thr[k]||[]; if(!ws.length||!ws.every(valid)) return;
+    if(tryChanges([{k:k,ch:fixed[k]}])<0) delete side.unsure[k];
   });
   // close calls where the runner-up letter would also make real words
   r.glyphs.forEach(function(g){
