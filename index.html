@@ -382,7 +382,7 @@ table.scale td:last-child{text-align:right;font-weight:700}
       <button class="primary" id="score-btn">Finalize round</button>
       <button class="ghost" id="clear-btn">Clear my board</button>
       <div class="why-off" id="why-off"></div>
-      <div class="ver" style="font-size:11px;opacity:.45;margin-top:6px">v17</div>
+      <div class="ver" style="font-size:11px;opacity:.45;margin-top:6px">v18</div>
     </div>
   </section>
 
@@ -183536,7 +183536,7 @@ function findGlyphs(img){
     if(ringAvg<0.75||ringMin<0.45||(fill>0.85&&bh<sm*2.5)) return;
     c.bw=bw; c.bh=bh; c.bh0=bh0; c.big=bh; c.ring=ringAvg; cands.push(c);
   });
-  if(!cands.length) return {glyphs:[],lab:lb.lab,w:w,h:h};
+  if(!cands.length) return {glyphs:[],lab:lb.lab,L:L,w:w,h:h};
   var mh=median(cands.map(function(c){return c.big;}));
   // wide letters (M, W) on a crooked tile come out well wider than they are tall
   var glyphs=cands.filter(function(c){ return c.big>mh*0.45&&(c.big<mh*1.45||(c.bh0<mh*1.3&&c.big<mh*1.9)); });
@@ -183557,7 +183557,8 @@ function findGlyphs(img){
     if(g.ids.length>1){ g.cx=g.sx/g.n; g.cy=g.sy/g.n; g.bw=g.x1-g.x0+1; g.bh=g.y1-g.y0+1; g.big=Math.max(g.bw,g.bh); }
   });
   glyphs=glyphs.filter(function(g){ return !gone[g.id]&&g.big>mh*0.62; });
-  return {glyphs:glyphs,lab:lb.lab,w:w,h:h,capH:mh};
+  var owner={}; glyphs.forEach(function(g){ g.ids.forEach(function(id){ owner[id]=g; }); });
+  return {owner:owner,glyphs:glyphs,lab:lb.lab,L:L,w:w,h:h,capH:mh};
 }
 
 // dominant grid angle from neighbour vectors (mod 90deg)
@@ -183571,6 +183572,27 @@ function gridAngle(g,s){
   return Math.atan2(sn,cs)/4;
 }
 
+// A photo taken at an angle slants and squashes the grid: rows and columns are no
+// longer square to each other or the same spacing. Measure each direction's step
+// separately (in pixels, at the board's typical tile size).
+function gridAxes(g,s,th){
+  var co=Math.cos(th), si=Math.sin(th), A=[0,0], B=[0,0], nA=0, nB=0;
+  for(var i=0;i<g.length;i++) for(var j=i+1;j<g.length;j++){
+    var dx=g[j].cx-g[i].cx, dy=g[j].cy-g[i].cy, d=Math.hypot(dx,dy), sl=(g[i].ls+g[j].ls)/2;
+    if(d<sl*0.7||d>sl*1.4) continue;
+    var u=dx*co+dy*si, v=-dx*si+dy*co, k=s/sl;
+    if(Math.abs(v)<Math.abs(u)*0.6){ var sa=u<0?-1:1; A[0]+=sa*dx*k; A[1]+=sa*dy*k; nA++; }
+    else if(Math.abs(u)<Math.abs(v)*0.6){ var sb=v<0?-1:1; B[0]+=sb*dx*k; B[1]+=sb*dy*k; nB++; }
+  }
+  A=nA?[A[0]/nA,A[1]/nA]:null; B=nB?[B[0]/nB,B[1]/nB]:null;
+  if(!A&&!B){ A=[s*co,s*si]; B=[-s*si,s*co]; }
+  else if(!A) A=[B[1],-B[0]];
+  else if(!B) B=[-A[1],A[0]];
+  // nearly parallel axes means too little to go on: fall back to a square grid
+  if(Math.abs(A[0]*B[1]-A[1]*B[0])<0.5*Math.hypot(A[0],A[1])*Math.hypot(B[0],B[1])){ A=[s*co,s*si]; B=[-s*si,s*co]; }
+  return {A:A,B:B};
+}
+
 function tileSize(g){
   var nn=g.map(function(a){ var b=1e9; g.forEach(function(c){ if(c!==a){ var d=Math.hypot(c.cx-a.cx,c.cy-a.cy); if(d<b)b=d; } }); return b; });
   return median(nn);
@@ -183581,9 +183603,10 @@ function tileSize(g){
 // scored by how cleanly it fits one grid step (or two, across a tile the camera
 // missed), and the best-fitting pairs are joined first, each join keeping its
 // cells free. A shaky pair only decides a position when nothing better does.
-function buildGrid(g,s,th){
-  var co=Math.cos(th), si=Math.sin(th);
-  g.forEach(function(a){ a.u=a.cx*co+a.cy*si; a.v=-a.cx*si+a.cy*co; a.gc=[0,0]; });
+function buildGrid(g,s,ax){
+  var A=ax.A, B=ax.B, det=A[0]*B[1]-A[1]*B[0];
+  // u,v: position in tile steps along the board's own rows and columns; sl: local tile size in those steps
+  g.forEach(function(a){ a.u=(a.cx*B[1]-a.cy*B[0])/det; a.v=(A[0]*a.cy-A[1]*a.cx)/det; a.sl=a.ls/s; a.gc=[0,0]; });
   var edges=[];
   function add(i,j,ru,rv,fu,fv){
     if(ru&&rv) return;                       // diagonal: not a grid neighbour
@@ -183593,7 +183616,7 @@ function buildGrid(g,s,th){
     edges.push({i:i,j:j,ru:ru,rv:rv,cost:err+0.45*(steps-1)});
   }
   for(var i=0;i<g.length;i++) for(var j=i+1;j<g.length;j++){
-    var du=g[j].u-g[i].u, dv=g[j].v-g[i].v, sl=(g[i].ls+g[j].ls)/2;
+    var du=g[j].u-g[i].u, dv=g[j].v-g[i].v, sl=(g[i].sl+g[j].sl)/2;
     if(Math.hypot(du,dv)>sl*2.6) continue;
     var fu=du/sl, fv=dv/sl, ru=Math.round(fu), rv=Math.round(fv);
     add(i,j,ru,rv,fu,fv);
@@ -183621,16 +183644,29 @@ function buildGrid(g,s,th){
   return {main:main,loose:loose};
 }
 
-// normalized glyph feature: NxN darkness, de-rotated, scaled by capH
-function feature(img,lab,c,th,capH){
-  var w=img.w,f=new Float32Array(N*N), co=Math.cos(th), si=Math.sin(th);
-  var sc=(capH*1.15)/N; // source px per feature px
+// normalized glyph feature: NxN darkness, sampled along the letter's own across
+// (ex) and down (ey) directions, in image px per feature px, so a slanted or
+// squashed letter is straightened out before it is compared
+// Ink is judged against this tile's own paper and ink brightness (blur, grain,
+// shade and small tiles fade thin strokes past any one cut-off for the whole photo).
+function localCut(fg,c){
+  if(c.cut!=null) return c.cut;
+  var w=fg.w, r=Math.round(fg.capH*0.62), vals=[];
+  for(var y=Math.max(0,Math.round(c.cy)-r);y<=Math.min(fg.h-1,Math.round(c.cy)+r);y++)
+    for(var x=Math.max(0,Math.round(c.cx)-r);x<=Math.min(w-1,Math.round(c.cx)+r);x++) vals.push(fg.L[y*w+x]);
+  c.cut=otsu(vals); return c.cut;
+}
+function feature(img,fg,c,ex,ey){
+  var w=img.w,f=new Float32Array(N*N), L=fg.L, lab=fg.lab, cut=localCut(fg,c);
   for(var y=0;y<N;y++) for(var x=0;x<N;x++){
     var acc=0;
     for(var sy=0;sy<2;sy++) for(var sx=0;sx<2;sx++){
-      var u=(x+0.25+sx*0.5-N/2)*sc, v=(y+0.25+sy*0.5-N/2)*sc;
-      var px=Math.round(c.cx+u*co-v*si), py=Math.round(c.cy+u*si+v*co);
-      if(px>=0&&py>=0&&px<w&&py<img.h&&c.ids.indexOf(lab[py*w+px])>=0) acc+=1;
+      var u=x+0.25+sx*0.5-N/2, v=y+0.25+sy*0.5-N/2;
+      var px=Math.round(c.cx+u*ex[0]+v*ey[0]), py=Math.round(c.cy+u*ex[1]+v*ey[1]);
+      if(px<0||py<0||px>=w||py>=img.h) continue;
+      var q=py*w+px;
+      // this letter's ink, or dark enough for this tile and not another letter's ink
+      if(c.ids.indexOf(lab[q])>=0||(L[q]<cut&&!(fg.owner[lab[q]]&&fg.owner[lab[q]]!==c))) acc+=1;
     }
     f[y*N+x]=acc/4;
   }
@@ -183660,16 +183696,27 @@ function readBoard(img,model){
     var near=g.map(function(c){ return [Math.hypot(c.cx-a.cx,c.cy-a.cy),c.big]; }).sort(function(x,y){return x[0]-y[0];}).slice(0,7);
     a.ls=ratio*median(near.map(function(x){return x[1];}));
   });
-  var th0=gridAngle(g,s), th=th0, bestK=0;
+  var th0=gridAngle(g,s), ax0=gridAxes(g,s,th0), bestK=0;
+  // the board may be photographed from any side: each quarter turn swaps which
+  // measured direction is the letters' across and which is their down
+  function turnAxes(k){ var A=ax0.A, B=ax0.B, m=function(v){ return [-v[0],-v[1]]; };
+    return [{A:A,B:B},{A:B,B:m(A)},{A:m(A),B:m(B)},{A:m(B),B:A}][k]; }
+  // letter feature steps for one tile: the grid step scaled to the letter, at this tile's local size
+  function steps(c,ax,deg){
+    var k=fg.capH*1.15/N/s*(c.ls/s), ex=[ax.A[0]*k,ax.A[1]*k], ey=[ax.B[0]*k,ax.B[1]*k];
+    if(deg){ var r=deg*Math.PI/180, co=Math.cos(r), si=Math.sin(r);
+      ex=[ex[0]*co-ex[1]*si,ex[0]*si+ex[1]*co]; ey=[ey[0]*co-ey[1]*si,ey[0]*si+ey[1]*co]; }
+    return [ex,ey];
+  }
+  var ax=ax0;
   if(model){
-    // the board may be photographed from any side: try all four turns, keep the best fit
     var bestSum=Infinity;
     for(var k=0;k<4;k++){
-      var phi=th0+k*Math.PI/2, sum=0, res=[];
-      g.forEach(function(c){ var f=feature(img,fg.lab,c,phi,fg.capH), cs=classify(f,model); sum+=cs[0].d; res.push([f,cs]); });
+      var axk=turnAxes(k), sum=0, res=[];
+      g.forEach(function(c){ var st=steps(c,axk,0), f=feature(img,fg,c,st[0],st[1]), cs=classify(f,model); sum+=cs[0].d; res.push([f,cs]); });
       if(sum<bestSum){ bestSum=sum; bestK=k; g.forEach(function(c,i){ c.f=res[i][0]; c.cands=res[i][1]; }); }
     }
-    th=th0+bestK*Math.PI/2;
+    ax=turnAxes(bestK);
     // a tile can sit crooked on its own: re-read each one a little turned either
     // way against its closest letters and keep the clearest reading
     var byCh={}; model.forEach(function(t){ (byCh[t.ch]=byCh[t.ch]||[]).push(t); });
@@ -183677,14 +183724,15 @@ function readBoard(img,model){
       var sub=[]; c.cands.slice(0,6).forEach(function(x){ sub=sub.concat(byCh[x.ch]); });
       var best=classify(c.f,sub);
       [-21,-14,-7,7,14,21].forEach(function(deg){
-        var f=feature(img,fg.lab,c,th+deg*Math.PI/180,fg.capH), cs=classify(f,sub);
+        var st=steps(c,ax,deg), f=feature(img,fg,c,st[0],st[1]), cs=classify(f,sub);
         if(cs[0].d<best[0].d){ best=cs; c.f=f; }
       });
       c.cands=best;
     });
-  } else g.forEach(function(c){ c.f=feature(img,fg.lab,c,th,fg.capH); c.cands=[]; });
+  } else g.forEach(function(c){ var st=steps(c,ax,0); c.f=feature(img,fg,c,st[0],st[1]); c.cands=[]; });
+  var th=Math.atan2(ax.A[1],ax.A[0]);
   g.forEach(function(c){ c.ch=c.cands.length?c.cands[0].ch:'?'; });
-  var gr=buildGrid(g,s,th);
+  var gr=buildGrid(g,s,ax);
   var main=gr.main.map(function(k){return g[k];});
   var minX=1e9,minY=1e9,maxX=-1e9,maxY=-1e9;
   main.forEach(function(c){ minX=Math.min(minX,c.gc[0]); maxX=Math.max(maxX,c.gc[0]); minY=Math.min(minY,c.gc[1]); maxY=Math.max(maxY,c.gc[1]); });
@@ -184365,21 +184413,64 @@ function sideFromRead(r,px){
   function allOk(rr,cc){ var ws=through(rr,cc); return ws.length>0&&ws.every(function(w){ return inDict(w.w); }); }
   function tryCh(rr,cc,ch){ var keep=side.rows[rr]; putCell(side,rr,cc,ch); var ok=allOk(rr,cc); side.rows[rr]=keep; return ok; }
   var fixed={};
-  // a word that isn't in the dictionary: is one tile in it a near-miss read?
-  for(var pass=0;pass<2;pass++){
-    gridWords(side.rows).filter(function(w){ return !inDict(w.w); }).forEach(function(w){
-      var best=null;
-      w.cells.forEach(function(p){
-        var k=p[0]+','+p[1], g=at[k]; if(!g||fixed[k]||!g.cands||g.cands.length<2) return;
-        var b=Math.max(g.cands[0].d,0.01);
-        g.cands.slice(1,4).forEach(function(a){
-          if(a.d>b*1.6+0.5) return;
-          if(tryCh(p[0],p[1],a.ch)&&(!best||a.d/b<best.cost)) best={k:k,p:p,ch:a.ch,cost:a.d/b,was:cell(side.rows,p[0],p[1])};
-        });
-      });
-      if(best){ putCell(side,best.p[0],best.p[1],best.ch); fixed[best.k]=1; side.unsure[best.k]={note:'Looked most like '+best.was+', but '+best.ch+' makes a word',options:[best.was]}; }
-    });
+  /* Dictionary pass. Every word on a finished board is real, so a word that isn't
+     points at misread tiles. For each one, try the reader's next-best letters on
+     one or two of its tiles and keep the change that makes the most across and
+     down words real without breaking any word that already was. */
+  var words=gridWords(side.rows), thr={};
+  words.forEach(function(w,wi){ w.cells.forEach(function(c){ var k=c[0]+','+c[1]; (thr[k]=thr[k]||[]).push(wi); }); });
+  function wordNow(wi){ return words[wi].cells.map(function(c){ return cell(side.rows,c[0],c[1]); }).join(''); }
+  function valid(wi){ return inDict(wordNow(wi)); }
+  function letterAt(k){ var p=k.split(','); return cell(side.rows,+p[0],+p[1]); }
+  function setAt(k,ch){ var p=k.split(','); putCell(side,+p[0],+p[1],ch); }
+  // how much worse a letter fits a tile than the tile's best reading (0 = best)
+  function cost(g,ch){ if(!g||!g.cands) return Infinity; var b=Math.max(g.cands[0].d,0.01);
+    for(var i=0;i<g.cands.length;i++) if(g.cands[i].ch===ch) return g.cands[i].d/b-1; return Infinity; }
+  function options(k,limit){ var g=at[k], cur=letterAt(k); if(!g||!g.cands) return [];
+    return g.cands.filter(function(a){ return a.ch!==cur; }).map(function(a){ return {k:k,ch:a.ch,c:cost(g,a.ch)}; })
+      .filter(function(o){ return o.c<=limit; }).slice(0,5); }
+  // words made real minus words broken, if these tiles changed
+  function tryChanges(ch){
+    var wis={}; ch.forEach(function(x){ (thr[x.k]||[]).forEach(function(wi){ wis[wi]=1; }); });
+    var list=Object.keys(wis).map(Number), before=list.map(valid), keep=ch.map(function(x){ return letterAt(x.k); });
+    ch.forEach(function(x){ setAt(x.k,x.ch); });
+    var after=list.map(valid), broke=false, gain=0;
+    list.forEach(function(_,i){ if(before[i]&&!after[i]) broke=true; gain+=(after[i]?1:0)-(before[i]?1:0); });
+    ch.forEach(function(x,i){ setAt(x.k,keep[i]); });
+    return broke?-1:gain;
   }
+  function apply(ch){ ch.forEach(function(x){
+    var was=letterAt(x.k); setAt(x.k,x.ch);
+    var first=fixed[x.k]||was; fixed[x.k]=first;
+    side.unsure[x.k]={note:'Looked most like '+first+', but '+x.ch+' makes the words real',options:[first]};
+  }); }
+  for(var pass=0;pass<5;pass++){
+    var changed=false;
+    words.forEach(function(w,wi){
+      if(valid(wi)) return;
+      var ks=w.cells.map(function(c){ return c[0]+','+c[1]; }), opt=ks.map(function(k){ return options(k,1.6); }), best=null;
+      function consider(ch,c){ var gain=tryChanges(ch); if(gain<=0) return;
+        if(!best||gain>best.gain||(gain===best.gain&&c<best.c)) best={ch:ch,c:c,gain:gain}; }
+      opt.forEach(function(os){ os.forEach(function(o){ consider([o],o.c); }); });
+      if(!best||!valid(wi)&&tryChanges(best.ch)<1) for(var i=0;i<ks.length;i++) for(var j=i+1;j<ks.length;j++)
+        opt[i].forEach(function(a){ opt[j].forEach(function(b){ if(a.c+b.c<=2.2) consider([a,b],a.c+b.c+0.3); }); });
+      if(best){ apply(best.ch); changed=true; }
+    });
+    if(!changed) break;
+  }
+  /* Tiles that look alike are almost always the same letter. Once the words show
+     that a tile read as X is really Y, a tile shaped just like it that still reads
+     X gets the same correction, when that doesn't break a real word. */
+  function fdist(a,b){ var d=0; for(var i=0;i<a.length;i++){ var e=a[i]-b[i]; d+=e*e; } return d; }
+  Object.keys(fixed).forEach(function(k){
+    var g=at[k], from=fixed[k], to=letterAt(k); if(!g||!g.f||from===to) return;
+    Object.keys(at).forEach(function(k2){
+      var h=at[k2]; if(k2===k||fixed[k2]||!h.f||letterAt(k2)!==from) return;
+      if(fdist(h.f,g.f)>=Math.max(h.cands[0].d,0.01)) return;   // closer to that tile than to any stored letter
+      if(cost(h,to)>4) return;
+      if(tryChanges([{k:k2,ch:to}])>=0&&(thr[k2]||[]).some(function(wi){ return !valid(wi); })) apply([{k:k2,ch:to}]);
+    });
+  });
   // close calls where the runner-up letter would also make real words
   r.glyphs.forEach(function(g){
     var k=g.r+','+g.c; if(fixed[k]||!g.cands||g.cands.length<2) return;
@@ -184759,7 +184850,7 @@ $('btn-lb').addEventListener('click',function(){ $('lb').scrollIntoView({behavio
 $('rules-done').addEventListener('click',function(){ $('dlg-rules').close(); });
 
 /* test hook (no effect in normal use) */
-window.__bg={applyActions:applyActions,boardText:boardText,get state(){ return state; },get me(){ return me; },gridWords:gridWords,pullLoose:pullLoose,bonusFor:bonusFor,roundFrom:roundFrom,
+window.__bg={sideFromRead:sideFromRead,dict:function(){ if(!DICT) buildDict(); return DICT; },applyActions:applyActions,boardText:boardText,get state(){ return state; },get me(){ return me; },gridWords:gridWords,pullLoose:pullLoose,bonusFor:bonusFor,roundFrom:roundFrom,
   refresh:function(){ save(); renderAll(); }};
 
 /* ---------- live game + shared leaderboard ----------
