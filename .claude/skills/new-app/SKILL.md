@@ -76,20 +76,29 @@ service cloud.firestore {
         && request.resource.data.state.size() < 250000;
       allow delete: if false;
     }
-    // FlightDeals (cano-app.github.io/FlightDeals); the checker writes here too, so no auth
+    // FlightDeals (cano-app.github.io/FlightDeals): watches people add; the checker writes prices
     match /flightwatches/{id} {
       allow read: if true;
       allow create, update: if request.resource.data.keys().hasOnly(
-        ['from','to','depart','ret','flex','cabin','airlines','stops','target','adults','by','created',
-         'checked','price','low','hist','best','byAir','deal','err','alerted'])
+        ['from','to','depart','ret','flex','any','nights','cabin','airlines','stops','target','adults','by','created',
+         'checked','price','low','hist','best','byAir','cal','deal','dealAt','err','alerted'])
         && request.resource.data.from is string && request.resource.data.from.size() == 3
         && request.resource.data.to is string && request.resource.data.to.size() == 3
-        && request.resource.data.depart is string && request.resource.data.depart.size() == 10
+        && request.resource.data.depart is string && request.resource.data.depart.size() <= 10
         && request.resource.data.cabin in ['economy','premium-economy','business','first']
         && (!('airlines' in request.resource.data) || request.resource.data.airlines.size() <= 30)
         && (!('hist' in request.resource.data) || request.resource.data.hist.size() <= 60)
+        && (!('cal' in request.resource.data) || request.resource.data.cal.size() <= 20)
         && (!('by' in request.resource.data) || request.resource.data.by.size() <= 30);
       allow delete: if true;
+    }
+    // FlightDeals: deal-site headlines (written once, never changed)
+    match /flightnews/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['title','link','src','t','tags'])
+        && request.resource.data.title is string && request.resource.data.title.size() <= 300
+        && request.resource.data.link is string && request.resource.data.link.size() <= 500;
+      allow update, delete: if false;
     }
   }
 }
