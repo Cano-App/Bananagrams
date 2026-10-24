@@ -17,7 +17,8 @@ defaults and go: a name, a phone-first layout, light and dark mode.
 ## 2. Make the repo
 
 - Repo name: short, in PascalCase or kebab-case. The owner is Joe's GitHub account or
-  org (currently `Cano-App`).
+  org (currently the user account `Cano-App`; the API gets a 403 creating repos, so expect
+  to give Joe the steps below).
 - If a GitHub tool can create the repo (for example `mcp__github__create_repository`),
   create it as public, with a README.
 - Otherwise give Joe these steps, then carry on once he says it's done:
@@ -76,6 +77,30 @@ service cloud.firestore {
         && request.resource.data.state is string
         && request.resource.data.state.size() < 250000;
       allow delete: if false;
+    }
+    // FlightDeals (cano-app.github.io/FlightDeals): watches people add; the checker writes prices
+    match /flightwatches/{id} {
+      allow read: if true;
+      allow create, update: if request.resource.data.keys().hasOnly(
+        ['from','to','depart','ret','flex','any','nights','cabin','airlines','stops','target','adults','by','created',
+         'checked','price','low','hist','best','byAir','cal','deal','dealAt','err','alerted'])
+        && request.resource.data.from is string && request.resource.data.from.size() == 3
+        && request.resource.data.to is string && request.resource.data.to.size() == 3
+        && request.resource.data.depart is string && request.resource.data.depart.size() <= 10
+        && request.resource.data.cabin in ['economy','premium-economy','business','first']
+        && (!('airlines' in request.resource.data) || request.resource.data.airlines.size() <= 30)
+        && (!('hist' in request.resource.data) || request.resource.data.hist.size() <= 60)
+        && (!('cal' in request.resource.data) || request.resource.data.cal.size() <= 20)
+        && (!('by' in request.resource.data) || request.resource.data.by.size() <= 30);
+      allow delete: if true;
+    }
+    // FlightDeals: deal-site headlines (written once, never changed)
+    match /flightnews/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['title','link','src','t','tags'])
+        && request.resource.data.title is string && request.resource.data.title.size() <= 300
+        && request.resource.data.link is string && request.resource.data.link.size() <= 500;
+      allow update, delete: if false;
     }
   }
 }
