@@ -22,8 +22,10 @@ defaults and go: a name, a phone-first layout, light and dark mode.
   create it as public, with a README.
 - Otherwise give Joe these steps, then carry on once he says it's done:
   github.com → **+** → **New repository** → name → **Public** → tick **Add a README**
-  → **Create repository**. If this session can't reach the new repo, he starts a new
-  Claude Code session with that repo selected and types "new app" again.
+  → **Create repository**. (Creating repos through the GitHub tool failed with a 403 in
+  Oct 2026, so expect to need this.) Once it exists, attach it to the current session
+  with `add_repo` (access `push`) and clone it. Only if that fails does he start a new
+  Claude Code session with that repo selected and type "new app" again.
 
 ## 3. Build it
 
