@@ -106,6 +106,17 @@ service cloud.firestore {
 }
 ```
 
+## 4b. When the app needs Claude to understand things (reading photos, writing text)
+
+On-phone text reading (Tesseract) can't handle real recipe cards: it mixes columns and
+loses handwriting and crossed-out text. When the app needs that level of understanding,
+also publish it as a Claude artifact with `capabilities: {sample: {images: true},
+downloads: true}`. Inside Claude, it asks Claude with `claude.use('sample')` (the
+`complex` tier for photos) and saves files with `claude.use('downloads')`. Keep the same
+`index.html` working on GitHub Pages with the simpler fallback. People using the artifact
+need a Claude sign-in, and Joe shares it from the page's Share menu. Example:
+Paprika Maker (cano-app/paprika).
+
 ## 5. Turn on GitHub Pages
 
 - The session usually can't turn Pages on through the API (403). After pushing, look for
